@@ -1,12 +1,12 @@
-export const userTags = {
-    "name": "Users",
-    "description": "API endpoints for users in the system"
+export const accountTags = {
+    "name": "Account",
+    "description": "API endpoints for user accounts in the system"
 }
 
-export const userPath = {
-    "/users/login": {
+export const accountPath = {
+    "/account/login": {
         "post": {
-            "tags": [ "Users" ],
+            "tags": [ "Account" ],
             "summary": "User Login Endpoint. Returns ",
             "description": "Returns json object of user data",
             "requestBody": {

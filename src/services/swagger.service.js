@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { userPath, userTags } from "../docs/user.doc.js";
+import { accountPath, accountTags } from "../docs/account.doc.js";
 
 dotenv.config();
 
@@ -35,10 +35,10 @@ const swaggerConfig = {
         }
     },
     "tags": [
-        userTags
+        accountTags
     ],
     "paths": {
-        ...userPath
+        ...accountPath
     },
 }
 

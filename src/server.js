@@ -35,7 +35,7 @@ app.use(
 
 
 
-app.use( `/users`, userRouter );
+app.use( `/account`, userRouter );
 
 
 // 404 error

@@ -112,8 +112,8 @@ class UserController {
 
         const isMatch = await bcrypt.compare( pass, user.password );
 
-        if ( !isMatch ) {
-            throw new HttpException( responseCode.unauthorized, 'Incorrect password!' );
+        if ( isMatch ) {
+            throw new HttpException( responseCode.unauthorized, 'Incorrect password! You can reset your password.' );
         }
 
         // user matched!
