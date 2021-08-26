@@ -1,8 +1,9 @@
 import query from '../db/db-connection.js';
 import { multipleColumnSet } from '../utils/common.utils.js';
 import { userRoles } from '../utils/userRoles.utils.js';
+import { userTypes } from '../utils/userTypes.utils.js';
 
-class UserModel {
+class AccountModel {
     tableName = 'users';
 
     find = async ( params = {} ) => {
@@ -30,14 +31,13 @@ class UserModel {
         return result[ 0 ];
     }
 
-    create = async ( { username, password, first_name, last_name, email, role = userRoles.SuperUser, age = 0 } ) => {
+    create = async ( { firstname, lastname, email, phone, password, gender, user_type, profile_picture = 'default_profile_picture.jpg' } ) => {
         const sql = `INSERT INTO ${this.tableName}
-        (username, password, first_name, last_name, email, role, age) VALUES (?,?,?,?,?,?,?)`;
+        (firstname, lastname, email, phone, password, gender, user_type, profile_picture) VALUES (?,?,?,?,?,?,?,?)`;
 
-        const result = await query( sql, [ username, password, first_name, last_name, email, role, age ] );
-        const affectedRows = result ? result.affectedRows : 0;
+        const result = await query( sql, [ firstname, lastname, email, phone, password, gender, user_type, profile_picture ] );
 
-        return affectedRows;
+        return result;
     }
 
     update = async ( params, id ) => {
@@ -60,4 +60,4 @@ class UserModel {
     }
 }
 
-export default new UserModel;
+export default new AccountModel;

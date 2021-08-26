@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors"
 import HttpException from './utils/HttpException.utils.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
-import userRouter from './routes/user.route.js';
+import accountRouter from './routes/account.route.js';
 import bodyParserPkg from 'body-parser';
 
 import swaggerUi from "swagger-ui-express";
@@ -35,7 +35,7 @@ app.use(
 
 
 
-app.use( `/account`, userRouter );
+app.use( `/account`, accountRouter );
 
 
 // 404 error

@@ -10,6 +10,26 @@ dotenv.config();
 
 class AccountController {
 
+    createAccount = async ( req, res, next ) => {
+        this.checkValidation( req );
+
+        await this.hashPassword( req );
+        const result = await AccountModel.create( req.body );
+
+        if ( !result ) {
+            throw new HttpException( responseCode.internalServerError, 'Something went wrong' );
+        }
+
+        const data = await AccountModel.findOne( { id: result.insertId } );
+        const { password, ...dataWithoutPassword } = data;
+
+        res.status( responseCode.created ).json( {
+            status: responseCode.created,
+            data: dataWithoutPassword,
+            message: 'Account created successfully! Verification link has been sent to your email.'
+        } );
+    };
+
     accountLogin = async ( req, res, next ) => {
         this.checkValidation( req );
 
