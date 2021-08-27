@@ -56,11 +56,19 @@ export const farmPaths = {
         }
 
     },
-    "/farm/edit": {
-        "put": {
+    "/farm/edit/{id}": {
+        "patch": {
             "tags": [ "Farms" ],
             "summary": "Endpoint to update farm details",
             "description": "Returns json object of farm data",
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of farm to edit",
+                    "required": true
+                }
+            ],
             "requestBody": {
                 "required": true,
                 "content": {
@@ -68,9 +76,6 @@ export const farmPaths = {
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "farm_id": {
-                                    "type": "string"
-                                },
                                 "farm_name": {
                                     "type": "string"
                                 },
@@ -91,6 +96,36 @@ export const farmPaths = {
                     }
                 }
             },
+            "responses": {
+                "200": {
+                    "description": "oK"
+                },
+                "401": {
+                    "description": "Unathorized permission denied."
+                },
+                "404": {
+                    "description": "No record found"
+                },
+                "500": {
+                    "description": "Internal server error."
+                }
+            }
+        }
+
+    },
+    "/farm/delete/{id}": {
+        "delete": {
+            "tags": [ "Farms" ],
+            "summary": "Endpoint to delete farm record",
+            "description": "Returns message",
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of farm to delete",
+                    "required": true
+                }
+            ],
             "responses": {
                 "200": {
                     "description": "oK"

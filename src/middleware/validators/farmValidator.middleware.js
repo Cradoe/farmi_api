@@ -39,12 +39,6 @@ export const createFarmSchema = [
 ];
 
 export const updateFarmSchema = [
-
-    body( 'farm_id' )
-        .exists()
-        .withMessage( 'Farm ID is required' )
-        .isNumeric()
-        .withMessage( 'Must be only numberic chars' ),
     body( 'farm_name' )
         .exists()
         .withMessage( 'Farm name is required.' )

@@ -9,7 +9,8 @@ const router = express.Router();
 
 router.post( '/', auth(), createFarmSchema, awaitHandlerFactory( farmController.createFarm ) );
 router.post( '/create', auth(), createFarmSchema, awaitHandlerFactory( farmController.createFarm ) );
-router.put( '/edit', auth(), updateFarmSchema, awaitHandlerFactory( farmController.editFarm ) );
+router.patch( '/edit/:id', auth(), updateFarmSchema, awaitHandlerFactory( farmController.editFarm ) );
+router.delete( '/delete/:id', auth(), awaitHandlerFactory( farmController.deleteFarm ) );
 
 
 

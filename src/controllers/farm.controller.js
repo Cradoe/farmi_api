@@ -34,15 +34,14 @@ class FarmController {
     editFarm = async ( req, res, next ) => {
         checkValidation( req );
 
-        const farm = await FarmModel.findOne( { id: req.body.farm_id } );
+        const farm = await FarmModel.findOne( { id: req.params.id } );
         if ( !farm ) {
             throw new HttpException( responseCode.notFound, 'No result found.' );
         } else if ( Number( farm.farmer_id ) !== Number( req.currentUser.id ) ) {
             throw new HttpException( responseCode.unauthorized, 'Access Denied. You are not the rightful owner of this farm.' );
         }
-        const { farm_id, ...dataToBeUpdated } = req.body;
 
-        const result = await FarmModel.update( dataToBeUpdated, farm_id );
+        const result = await FarmModel.update( req.body, req.params.id );
 
         if ( !result ) {
             throw new HttpException( responseCode.internalServerError, 'Something went wrong. Couldn\'t update record at the moment.' );
@@ -51,7 +50,29 @@ class FarmController {
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
             message: 'Farm updated successfully.',
-            data: { ...farm, ...dataToBeUpdated }
+            data: { ...farm, ...req.body }
+        } );
+
+    };
+
+    deleteFarm = async ( req, res, next ) => {
+
+        const farm = await FarmModel.findOne( { id: req.params.id } );
+        if ( !farm ) {
+            throw new HttpException( responseCode.notFound, 'No result found.' );
+        } else if ( Number( farm.farmer_id ) !== Number( req.currentUser.id ) ) {
+            throw new HttpException( responseCode.unauthorized, 'Permission Denied. You are not the rightful owner of this farm.' );
+        }
+
+        const result = await FarmModel.delete( req.params.id );
+
+        if ( !result ) {
+            throw new HttpException( responseCode.internalServerError, 'Something went wrong. Couldn\'t delete record at the moment.' );
+        }
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Farm deleted successfully.'
         } );
 
     };

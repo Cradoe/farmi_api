@@ -1,6 +1,6 @@
 export const farmerTag = {
     "name": "Farmers",
-    "description": "API endpoints for farms"
+    "description": "API endpoints for farmers"
 }
 
 export const farmerPaths = {
