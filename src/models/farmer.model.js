@@ -1,10 +1,8 @@
 import query from '../db/db-connection.js';
 import { multipleColumnSet } from '../utils/common.utils.js';
-import { userRoles } from '../utils/userRoles.utils.js';
-import { userTypes } from '../utils/userTypes.utils.js';
 
-class AccountModel {
-    tableName = 'users';
+class FarmerModel {
+    tableName = 'farmers';
 
     find = async ( params = {} ) => {
         let sql = `SELECT * FROM ${this.tableName}`;
@@ -31,11 +29,11 @@ class AccountModel {
         return result[ 0 ];
     }
 
-    create = async ( { firstname, lastname, email, phone, password, gender, user_type, activation_code, profile_picture = 'default_profile_picture.jpg' } ) => {
+    create = async ( user_id ) => {
         const sql = `INSERT INTO ${this.tableName}
-        (firstname, lastname, email, phone, password, gender, user_type, profile_picture,activation_code) VALUES (?,?,?,?,?,?,?,?,?)`;
+        (user_id) VALUES (?)`;
 
-        const result = await query( sql, [ firstname, lastname, email, phone, password, gender, user_type, profile_picture, activation_code ] );
+        const result = await query( sql, [ user_id ] );
 
         return result;
     }
@@ -60,4 +58,4 @@ class AccountModel {
     }
 }
 
-export default new AccountModel;
+export default new FarmerModel;

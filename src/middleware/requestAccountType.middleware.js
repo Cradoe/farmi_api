@@ -4,3 +4,8 @@ export const farmerAccountType = ( req, res, next ) => {
     req.body.user_type = userTypes.farmer;
     next();
 }
+
+export const investorAccountType = ( req, res, next ) => {
+    req.body.user_type = userTypes.investor;
+    next();
+}

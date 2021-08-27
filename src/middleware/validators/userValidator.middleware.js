@@ -41,7 +41,7 @@ export const createAccountSchema = [
     body( 'confirm_password' )
         .exists()
         .custom( ( value, { req } ) => value === req.body.password )
-        .withMessage( 'confirm_password field must have the same value as the password field' ),
+        .withMessage( 'Confirm password field must have the same value as the password field' ),
     body( 'gender' )
         .exists()
         .withMessage( 'Your Gender is required' )
@@ -107,6 +107,19 @@ export const updateUserSchema = [
         .withMessage( 'Invalid updates!' )
 ];
 
+export const activateAccountSchema = [
+    body( 'email' )
+        .exists()
+        .withMessage( 'Email address is required' )
+        .isLength( { min: 3 } )
+        .withMessage( 'Email address must be at least 3 chars long' ),
+    body( 'activation_code' )
+        .exists()
+        .withMessage( 'Activation code is required' )
+        .isLength( { min: 10 } )
+        .withMessage( 'Activation code must be at least 10 chars long' ),
+
+];
 
 export const validateLogin = [
     body( 'email' )
