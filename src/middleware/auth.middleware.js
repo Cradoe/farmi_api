@@ -41,7 +41,6 @@ export const auth = ( ...roles ) => {
             if ( !ownerAuthorized && roles.length && !roles.includes( user.role ) ) {
                 throw new HttpException( 401, 'Unauthorized' );
             }
-
             // if the user has permissions
             req.currentUser = user;
             next();

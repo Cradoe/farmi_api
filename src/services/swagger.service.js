@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
-import { accountPath, accountTags } from "../docs/account.doc.js";
+import { accountPaths, accountTag } from "../docs/account.doc.js";
+import { farmPaths, farmTag } from "../docs/farm.doc.js";
+import { farmerPaths, farmerTag } from "../docs/farmer.doc.js";
 
 dotenv.config();
 
@@ -35,10 +37,14 @@ const swaggerConfig = {
         }
     },
     "tags": [
-        accountTags
+        accountTag,
+        farmTag,
+        farmerTag
     ],
     "paths": {
-        ...accountPath
+        ...accountPaths,
+        ...farmPaths,
+        ...farmerPaths
     },
 }
 

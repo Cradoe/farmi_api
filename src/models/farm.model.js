@@ -1,10 +1,8 @@
 import query from '../db/db-connection.js';
 import { multipleColumnSet } from '../utils/common.utils.js';
-import { userRoles } from '../utils/userRoles.utils.js';
-import { userTypes } from '../utils/userTypes.utils.js';
 
-class AccountModel {
-    tableName = 'users';
+class FarmModel {
+    tableName = 'farms';
 
     find = async ( params = {} ) => {
         let sql = `SELECT * FROM ${this.tableName}`;
@@ -31,17 +29,19 @@ class AccountModel {
         return result[ 0 ];
     }
 
-    create = async ( { firstname, lastname, email, phone, password, gender, user_type, activation_code, profile_picture = 'default_profile_picture.jpg' } ) => {
+    create = async ( data ) => {
+        const { farmer_id, farm_category_id, farm_name, latitude, longitude, description, date_founded, land_size } = data;
         const sql = `INSERT INTO ${this.tableName}
-        (firstname, lastname, email, phone, password, gender, user_type, profile_picture,activation_code) VALUES (?,?,?,?,?,?,?,?,?)`;
+        (farmer_id, farm_category_id, farm_name, latitude, longitude, description, date_founded, land_size) VALUES (?,?,?,?,?,?,?,?)`;
 
-        const result = await query( sql, [ firstname, lastname, email, phone, password, gender, user_type, profile_picture, activation_code ] );
+        const result = await query( sql, [ farmer_id, farm_category_id, farm_name, latitude, longitude, description, date_founded, land_size ] );
 
         return result;
     }
 
     update = async ( params, id ) => {
-        const { columnSet, values } = multipleColumnSet( params )
+        const { farm_name, latitude, longitude, description, land_size } = params;
+        const { columnSet, values } = multipleColumnSet( { farm_name, latitude, longitude, description, land_size } )
 
         const sql = `UPDATE ${this.tableName} SET ${columnSet} WHERE id = ?`;
 
@@ -60,4 +60,4 @@ class AccountModel {
     }
 }
 
-export default new AccountModel;
+export default new FarmModel;

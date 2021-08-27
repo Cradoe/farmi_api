@@ -26,7 +26,7 @@ class UserModel {
 
         const result = await query( sql, [ ...values ] );
 
-        // return back the first row (user)
+        // return back the first row 
         return result[ 0 ];
     }
 
@@ -43,7 +43,7 @@ class UserModel {
     update = async ( params, id ) => {
         const { columnSet, values } = multipleColumnSet( params )
 
-        const sql = `UPDATE user SET ${columnSet} WHERE id = ?`;
+        const sql = `UPDATE ${this.tableName} SET ${columnSet} WHERE id = ?`;
 
         const result = await query( sql, [ ...values, id ] );
 

@@ -1,13 +1,18 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors"
+import bodyParserPkg from 'body-parser';
+
 import HttpException from './utils/HttpException.utils.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
-import accountRouter from './routes/account.route.js';
-import bodyParserPkg from 'body-parser';
 
 import swaggerUi from "swagger-ui-express";
 import swaggerApiSpec from './services/swagger.service.js';
+
+
+import accountRouter from './routes/account.route.js';
+import farmRouter from './routes/farm.route.js';
+import farmerRouter from './routes/farmer.route.js';
 
 const { json, urlencoded } = bodyParserPkg;
 
@@ -33,9 +38,9 @@ app.use(
     swaggerUi.setup( swaggerApiSpec )
 );
 
-
-
 app.use( `/account`, accountRouter );
+app.use( `/farm`, farmRouter );
+app.use( `/farmer`, farmerRouter );
 
 
 // 404 error
@@ -46,6 +51,7 @@ app.all( '*', ( req, res, next ) => {
 
 // Error middleware
 app.use( errorMiddleware );
+
 
 
 export const start = () => {

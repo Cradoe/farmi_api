@@ -6,14 +6,14 @@ import bcrypt from "bcrypt";
 import { responseCode } from '../utils/responseCode.utils.js';
 import { sendEmail } from '../services/sendEmail.service.js';
 import { generateRandomCode } from '../utils/common.utils.js';
-import { generateToken } from '../utils/auth.utils.js';
+import { generateToken, checkValidation } from '../utils/auth.utils.js';
 import { userTypes } from '../utils/userTypes.utils.js';
 
 
 class AccountController {
 
     createAccount = async ( req, res, next ) => {
-        this.checkValidation( req );
+        checkValidation( req );
 
         await this.hashPassword( req );
 
@@ -42,8 +42,8 @@ class AccountController {
                 } else {
                     res.status( responseCode.created ).json( {
                         status: responseCode.created,
-                        data: dataWithoutPassword,
-                        message: 'Account created successfully! Verification code has been sent to your email.'
+                        message: 'Account created successfully! Verification code has been sent to your email.',
+                        data: dataWithoutPassword
                     } );
                 }
             } catch ( error ) {
@@ -76,7 +76,7 @@ class AccountController {
     };
 
     activateAccount = async ( req, res, next ) => {
-        this.checkValidation( req );
+        checkValidation( req );
 
         let account = await AccountModel.findOne( { email: req.body.email } );
 
@@ -108,14 +108,14 @@ class AccountController {
 
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
-            data: accountWithoutPassword,
+            message: 'Account verified successfully.',
             token,
-            message: 'Account verified successfully.'
+            data: accountWithoutPassword,
         } );
     };
 
     accountLogin = async ( req, res, next ) => {
-        this.checkValidation( req );
+        checkValidation( req );
 
         const { email, password: pass } = req.body;
 
@@ -159,18 +159,12 @@ class AccountController {
 
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
-            data: accountDataWithoutPassword,
+            message: 'Login successful.',
             token,
-            message: 'Login successful.'
+            data: accountDataWithoutPassword
         } );
     };
 
-    checkValidation = ( req ) => {
-        const errors = validationResult( req )
-        if ( !errors.isEmpty() ) {
-            throw new HttpException( responseCode.badRequest, errors.errors[ 0 ].msg || 'One or more required data is not correctly specified.', errors );
-        }
-    }
 
     // hash password if it exists
     hashPassword = async ( req ) => {
