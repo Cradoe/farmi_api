@@ -1,7 +1,7 @@
 import AccountModel from '../models/account.model.js';
 import FarmerModel from '../models/farmer.model.js';
+import FarmModeratorModel from '../models/farmModerator.model.js';
 import HttpException from '../utils/HttpException.utils.js';
-import { validationResult } from 'express-validator';
 import bcrypt from "bcrypt";
 import { responseCode } from '../utils/responseCode.utils.js';
 import { sendEmail } from '../services/sendEmail.service.js';
@@ -12,8 +12,7 @@ import { userTypes } from '../utils/userTypes.utils.js';
 
 class AccountController {
 
-    createAccount = async ( req, res, next ) => {
-        checkValidation( req );
+    createUserAccount = async ( req, res, next ) => {
 
         await this.hashPassword( req );
 
@@ -29,10 +28,22 @@ class AccountController {
         }
 
         const accountDetails = await AccountModel.findOne( { id: result.insertId } );
-        const { password, ...dataWithoutPassword } = accountDetails;
+        return accountDetails;
+    };
 
+    createFarmerAccount = async ( req, res, next ) => {
+        checkValidation( req );
 
-        const emailCallback = ( err, data ) => {
+        const userAccount = await this.createUserAccount( req, res, next );
+        const farmerAccount = await FarmerModel.create( userAccount.id );
+
+        if ( !farmerAccount ) {
+            throw new HttpException( responseCode.internalServerError, 'Something went wrong' );
+        }
+
+        const { password, ...dataWithoutPassword } = userAccount;
+
+        const emailCallback = ( err ) => {
             try {
                 if ( err ) {
                     res.status( responseCode.internalServerError ).json( {
@@ -51,29 +62,116 @@ class AccountController {
             }
         }
 
+        await this.sendActivationCode( userAccount, emailCallback );
+
+    };
+
+    farmerLogin = async ( req, res, next ) => {
+        checkValidation( req );
+        let account = await this.accountLogin( req, res, next );
+        if ( account.user_type !== userTypes.farmer ) {
+            throw new HttpException( responseCode.unauthorized, 'Access denied! You don\'t have permission to access this page.' );
+        }
+
+
+        const farmerAccount = await FarmerModel.findOne( { user_id: account.id } );
+
+        if ( !farmerAccount ) {
+            throw new HttpException( responseCode.unauthorized, 'Access denied! You don\'t have permission to access this page.' );
+        } else if ( farmerAccount.status === "pending" ) {
+            throw new HttpException( responseCode.forbidden, 'Unable to Login. Please activate your account.' );
+        } else if ( farmerAccount.status === 'blocked' ) {
+            throw new HttpException( responseCode.unauthorized, 'This account has been blocked. Contact support center.' );
+        } else if ( farmerAccount.status === 'deleted' ) {
+            throw new HttpException( responseCode.unauthorized, 'This account is no longer active.' );
+        }
+
+        account = {
+            ...account,
+            address: farmerAccount.address,
+            proof_of_identitty: farmerAccount.proof_of_identitty
+        }
+
+        const { password, ...accountDataWithoutPassword } = account;
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Login successful.',
+            token,
+            data: accountDataWithoutPassword
+        } );
+    };
+
+    createFarmModeratorAccount = async ( req, res, next ) => {
+        checkValidation( req );
+
+        const userAccount = await this.createUserAccount( req, res, next );
+        const moderatorAccount = await FarmModeratorModel.create( userAccount.id );
+
+        if ( !moderatorAccount ) {
+            throw new HttpException( responseCode.internalServerError, 'Something went wrong' );
+        }
+
+        res.status( responseCode.created ).json( {
+            status: responseCode.created,
+            message: 'Account created successfully! Moderator can now login with the email and password.',
+            data: userAccount
+        } );
+
+
+    };
+
+    farmModeratorLogin = async ( req, res, next ) => {
+        checkValidation( req );
+        let account = await this.accountLogin( req, res, next );
+
+        if ( account.user_type !== userTypes.farmer ) {
+            throw new HttpException( responseCode.unauthorized, 'Access denied! You don\'t have permission to access this page.' );
+        }
+
+
+        const farmModeratorAccount = await FarmModeratorModel.findOne( { user_id: account.id } );
+
+        if ( !farmModeratorAccount ) {
+            throw new HttpException( responseCode.unauthorized, 'Access denied! You don\'t have permission to access this page.' );
+        } else if ( farmModeratorAccount.status === "pending" ) {
+            throw new HttpException( responseCode.forbidden, 'Unable to Login. Please activate your account.' );
+        } else if ( farmModeratorAccount.status === 'blocked' ) {
+            throw new HttpException( responseCode.unauthorized, 'This account has been blocked. Contact the real owner of this farm.' );
+        } else if ( farmModeratorAccount.status === 'deleted' ) {
+            throw new HttpException( responseCode.unauthorized, 'This account is no longer active.' );
+        }
+
+        account = {
+            ...account,
+            address: farmModeratorAccount.address,
+            proof_of_identitty: farmModeratorAccount.proof_of_identitty
+        }
+
+        const { password, ...accountDataWithoutPassword } = account;
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Login successful.',
+            token,
+            data: accountDataWithoutPassword
+        } );
+    };
+
+    sendActivationCode = async ( { email: to, activation_code }, callback ) => {
+
         const activationEmail = {
-            to: accountDetails.email,
+            to,
             subject: "One more step to go! Activation your account now",
             body: `
-                   We are super exited to have you. 
-                   Kindly use the code below to activate your account.
-                   ${accountDetails.activation_code}
-                   `
+               We are super exited to have you. 
+               Kindly use the code below to activate your account.
+               ${activation_code}
+               `
         }
 
-        sendEmail( activationEmail, emailCallback );
-    };
-
-    createFarmerAccount = async ( userId ) => {
-
-        const result = await FarmerModel.create( userId );
-
-        if ( result ) {
-            return true;
-        } else {
-            return false;
-        }
-    };
+        await sendEmail( activationEmail, callback );
+    }
 
     activateAccount = async ( req, res, next ) => {
         checkValidation( req );
@@ -86,20 +184,6 @@ class AccountController {
 
         if ( account.activation_code !== req.body.activation_code ) {
             throw new HttpException( responseCode.badRequest, 'Invalid activation code.' );
-        }
-
-        if ( account.user_type === userTypes.farmer ) {
-            const result = FarmerModel.findOne( { user_id: account.id } );
-            if ( !result ) { //if account has not been previously activated.
-                const farmerAccount = this.createFarmerAccount( account.id );
-
-                if ( !farmerAccount ) {
-                    throw new HttpException( responseCode.internalServerError, 'Something went wrong' );
-                }
-            }
-
-        } else if ( account.user_type === userTypes.investor ) {
-            //do something
         }
 
         const token = generateToken( account.id.toString() );
@@ -131,42 +215,9 @@ class AccountController {
         if ( !isMatch ) {
             throw new HttpException( responseCode.unauthorized, 'Incorrect password! You can reset your password.' );
         }
-
-        // account matched!
-        const token = generateToken( account.id.toString() );
-
-        const { password, ...accountDataWithoutPassword } = account;
-
-        if ( account.user_type === userTypes.farmer ) {
-            const farmerAccount = await FarmerModel.findOne( { user_id: account.id } );
-
-            if ( !farmerAccount ) {
-                throw new HttpException( responseCode.forbidden, 'Unable to Login. Please activate your account.' );
-            } else if ( farmerAccount.status === 'blocked' ) {
-                throw new HttpException( responseCode.unauthorized, 'This account has been blocked. Contact support center.' );
-            } else if ( farmerAccount.status === 'deleted' ) {
-                throw new HttpException( responseCode.unauthorized, 'This account is no longer active.' );
-            }
-
-            account = {
-                ...account,
-                address: farmerAccount.address,
-                proof_of_identitty: farmerAccount.proof_of_identitty
-            }
-        } else if ( account.user_type === userTypes.investor ) {
-            //do something
-        }
-
-        res.status( responseCode.oK ).json( {
-            status: responseCode.oK,
-            message: 'Login successful.',
-            token,
-            data: accountDataWithoutPassword
-        } );
+        return account;
     };
 
-
-    // hash password if it exists
     hashPassword = async ( req ) => {
         if ( req.body.password ) {
             req.body.password = await bcrypt.hash( req.body.password, 8 );

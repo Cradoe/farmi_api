@@ -54,6 +54,14 @@ export const createAccountSchema = [
 ];
 
 
+export const createFarmModeratorSchema = [
+    body( 'farm_id' )
+        .exists()
+        .withMessage( 'Farm ID is required' )
+        .isNumeric()
+        .withMessage( 'Farm ID must be only numeric value' ),
+    ...createAccountSchema
+];
 
 export const activateAccountSchema = [
     body( 'email' )

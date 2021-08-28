@@ -27,7 +27,7 @@ transporter.verify( ( error, success ) => {
 } );
 
 
-export const sendEmail = ( { subject, body, to }, callback = () => { } ) => {
+export const sendEmail = async ( { subject, body, to }, callback = () => { } ) => {
     try {
 
         const mail = {
@@ -37,7 +37,7 @@ export const sendEmail = ( { subject, body, to }, callback = () => { } ) => {
             from: process.env.GMAIL_USER_NAME
         }
 
-        transporter.sendMail( mail, callback );
+        await transporter.sendMail( mail, callback );
 
     } catch ( error ) {
         console.log( error );
