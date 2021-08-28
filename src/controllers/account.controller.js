@@ -1,5 +1,6 @@
 import AccountModel from '../models/account.model.js';
 import FarmerModel from '../models/farmer.model.js';
+import FarmModel from '../models/farm.model.js';
 import FarmModeratorModel from '../models/farmModerator.model.js';
 import HttpException from '../utils/HttpException.utils.js';
 import bcrypt from "bcrypt";
@@ -105,8 +106,19 @@ class AccountController {
     createFarmModeratorAccount = async ( req, res, next ) => {
         checkValidation( req );
 
+
+        const farm = await FarmModel.findOne( { id: req.body.farm_id } );
+
+        if ( !farm || farm === undefined ) {
+            throw new HttpException( responseCode.internalServerError, 'Unable to access farm.' );
+        } else if ( Number( farm.farmer_id ) !== Number( req.currentUser.id ) ) {
+            throw new HttpException( responseCode.unauthorized, 'Permission denied. You don\'t have permission to create a moderator for this farm.' );
+        }
+
+
         const userAccount = await this.createUserAccount( req, res, next );
-        const moderatorAccount = await FarmModeratorModel.create( userAccount.id );
+
+        const moderatorAccount = await FarmModeratorModel.create( userAccount.id, req.body.farm_id );
 
         if ( !moderatorAccount ) {
             throw new HttpException( responseCode.internalServerError, 'Something went wrong' );

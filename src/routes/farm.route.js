@@ -13,6 +13,8 @@ router.post( '/create', auth(), createFarmSchema, awaitHandlerFactory( farmContr
 router.patch( '/edit/:id', auth(), updateFarmSchema, awaitHandlerFactory( farmController.editFarm ) );
 router.delete( '/delete/:id', auth(), awaitHandlerFactory( farmController.deleteFarm ) );
 
+router.delete( '/moderator/:id', auth(), awaitHandlerFactory( farmController.deleteFarm ) );
+
 
 
 

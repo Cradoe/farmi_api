@@ -3,11 +3,70 @@ export const accountTag = {
     "description": "API endpoints for user accounts in the system"
 }
 
+const loginSchema = {
+    "post": {
+        "tags": [ "Account" ],
+        "summary": "Login Endpoint.",
+        "description": "Returns json object of user data",
+        "requestBody": {
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string"
+                            },
+                            "password": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "OK"
+            },
+            "400": {
+                "description": "Validation error"
+            },
+            "401": {
+                "description": "Invalid login"
+            },
+            "403": {
+                "description": "Account has not been activated."
+            },
+            "500": {
+                "description": "Internal server error."
+            }
+        }
+    },
+}
+
+const userAccountRegistrationResponses = {
+    "201": {
+        "description": "Created"
+    },
+    "400": {
+        "description": "Bad request"
+    },
+    "401": {
+        "description": "Unathurized request"
+    },
+    "500": {
+        "description": "Internal server error."
+    }
+}
+
 export const accountPaths = {
-    "/account/login": {
+    "/account/farmer/login": { ...loginSchema },
+    "/account/farmer/register": {
         "post": {
             "tags": [ "Account" ],
-            "summary": "User Login Endpoint.",
+            "summary": "Farmer registration Endpoint.",
             "description": "Returns json object of user data",
             "requestBody": {
                 "required": true,
@@ -16,10 +75,25 @@ export const accountPaths = {
                         "schema": {
                             "type": "object",
                             "properties": {
+                                "firstname": {
+                                    "type": "string"
+                                },
+                                "lastname": {
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "type": "string"
+                                },
                                 "email": {
                                     "type": "string"
                                 },
+                                "gender": {
+                                    "type": "char"
+                                },
                                 "password": {
+                                    "type": "string"
+                                },
+                                "confirm_password": {
                                     "type": "string"
                                 }
                             }
@@ -28,25 +102,58 @@ export const accountPaths = {
                 }
             },
             "responses": {
-                "200": {
-                    "description": "OK"
-                },
-                "400": {
-                    "description": "Validation error"
-                },
-                "401": {
-                    "description": "Invalid login"
-                },
-                "403": {
-                    "description": "Account has not been activated."
-                },
-                "500": {
-                    "description": "Internal server error."
-                }
+                ...userAccountRegistrationResponses
             }
-        },
-
+        }
     },
+    "/account/farm_moderator/login": { ...loginSchema },
+    "/account/farm_moderator/register": {
+        "post": {
+            "tags": [ "Account" ],
+            "summary": "Farmer moderator registration Endpoint.",
+            "description": "Returns json object of user data",
+            "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "farm_id": {
+                                    "type": "string"
+                                },
+                                "firstname": {
+                                    "type": "string"
+                                },
+                                "lastname": {
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "gender": {
+                                    "type": "char"
+                                },
+                                "password": {
+                                    "type": "string"
+                                },
+                                "confirm_password": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                ...userAccountRegistrationResponses
+            }
+        }
+    },
+
     "/account/verify": {
         "post": {
             "tags": [ "Account" ],
@@ -87,86 +194,6 @@ export const accountPaths = {
         },
 
     },
-    "/account/farmer/register": {
-        "post": {
-            "tags": [ "Account" ],
-            "summary": "Farmer registration Endpoint.",
-            "description": "Returns json object of user data",
-            "requestBody": {
-                "required": true,
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "firstname": {
-                                    "type": "string"
-                                },
-                                "lastname": {
-                                    "type": "string"
-                                },
-                                "phone": {
-                                    "type": "string"
-                                },
-                                "email": {
-                                    "type": "string"
-                                },
-                                "gender": {
-                                    "type": "char"
-                                },
-                                "password": {
-                                    "type": "string"
-                                },
-                                "confirm_password": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "responses": {
-                "201": {
-                    "description": "OK"
-                },
-                "400": {
-                    "description": "Bad request"
-                },
-                "401": {
-                    "description": "Invalid login"
-                },
-                "403": {
-                    "description": "Account has not been activated."
-                },
-                "500": {
-                    "description": "Internal server error."
-                }
-            }
-        },
 
-    },
-    // "/users/id/{id}": {
-    //     "get": {
-    //         "tags": [ "Users" ],
-    //         "summary": "Get all users in system",
-    //         "parameters": [
-    //             {
-    //                 "name": "id",
-    //                 "in": "path",
-    //                 "description": "ID of pet to use",
-    //                 "required": true
-    //             }
-    //         ],
-    //         "responses": {
-    //             "200": {
-    //                 "description": "OK"
-    //             },
-    //             "401": {
-    //                 "description": "error"
-    //             }
-    //         }
-    //     },
-
-    // }
 }
 
