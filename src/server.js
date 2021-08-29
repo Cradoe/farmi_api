@@ -9,7 +9,6 @@ import { errorMiddleware } from './middleware/error.middleware.js';
 import swaggerUi from "swagger-ui-express";
 import swaggerApiSpec from './services/swagger.service.js';
 
-
 import accountRouter from './routes/account.route.js';
 import farmRouter from './routes/farm.route.js';
 import farmerRouter from './routes/farmer.route.js';
@@ -30,7 +29,6 @@ app.use( json() )
 app.use( urlencoded( { extended: true } ) )
 
 const port = Number( process.env.PORT || 3000 );
-
 
 app.use(
     "/api-docs",
