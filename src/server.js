@@ -29,7 +29,7 @@ app.options( "*", cors() );
 app.use( json() )
 app.use( urlencoded( { extended: true } ) )
 
-const port = Number( process.env.PORT || 3331 );
+const port = Number( process.env.PORT || 3000 );
 
 
 app.use(
