@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import { query } from "express";
 import mysql2 from "mysql2";
 
 dotenv.config();
@@ -7,10 +6,10 @@ dotenv.config();
 class DBConnection {
     constructor () {
         this.db = mysql2.createPool( {
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASS,
-            database: process.env.DB_DATABASE
+            host: 'us-cdbr-east-04.cleardb.com',
+            user: 'ba9ebd506c114f',
+            password: '8e3138ec',
+            database: 'heroku_df536a102839664'
         } );
 
         this.checkConnection();
