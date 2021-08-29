@@ -19,6 +19,10 @@ const swaggerConfig = {
             url: 'http://127.0.0.1:' + process.env.PORT || 3331,
             description: 'Development server',
         },
+        {
+            url: 'https://farmi-api-center.herokuapp.com',
+            description: 'Production server',
+        }
     ],
     "consumes": [
         "application/json"
