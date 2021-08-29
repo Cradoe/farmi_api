@@ -1,4 +1,4 @@
-export const multipleColumnSet = ( object ) => {
+export const multipleColumnSet = ( object, concatString = ', ' ) => {
     if ( typeof object !== 'object' ) {
         throw new Error( 'Invalid input' );
     }
@@ -6,7 +6,7 @@ export const multipleColumnSet = ( object ) => {
     const keys = Object.keys( object );
     const values = Object.values( object );
 
-    let columnSet = keys.map( key => `${key} = ?` ).join( ', ' );
+    let columnSet = keys.map( key => `${key} = ?` ).join( concatString );
 
     return {
         columnSet,

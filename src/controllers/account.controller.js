@@ -1,7 +1,3 @@
-import AccountModel from '../models/account.model.js';
-import FarmerModel from '../models/farmer.model.js';
-import FarmModel from '../models/farm.model.js';
-import FarmModeratorModel from '../models/farmModerator.model.js';
 import HttpException from '../utils/HttpException.utils.js';
 import bcrypt from "bcrypt";
 import { responseCode } from '../utils/responseCode.utils.js';
@@ -9,6 +5,12 @@ import { sendEmail } from '../services/sendEmail.service.js';
 import { generateRandomCode } from '../utils/common.utils.js';
 import { generateToken, checkValidation } from '../utils/auth.utils.js';
 import { userTypes } from '../utils/userTypes.utils.js';
+
+import AccountModel from '../models/account.model.js';
+import FarmerModel from '../models/farmer.model.js';
+import FarmModel from '../models/farm.model.js';
+import FarmModeratorModel from '../models/farmModerator.model.js';
+import BankAccountModel from '../models/bankAccount.model.js';
 
 
 class AccountController {
@@ -228,6 +230,63 @@ class AccountController {
             throw new HttpException( responseCode.unauthorized, 'Incorrect password! You can reset your password.' );
         }
         return account;
+    };
+
+    addBankAccount = async ( req, res, next ) => {
+        checkValidation( req );
+        req.body.user_id = req.currentUser.id;
+        const { account_number, user_id } = req.body;
+        let accountDetails = await BankAccountModel.findOne( { account_number, user_id }, ' AND ' );
+
+        if ( accountDetails && accountDetails.status !== 'deleted' ) {
+            throw new HttpException( responseCode.unauthorized, 'This account details has been previously registered by you.' );
+        } else if ( accountDetails && accountDetails.status === 'deleted' ) {
+            //change status from deleted
+            const result = await BankAccountModel.update( { status: 'active' }, accountDetails.id );
+            accountDetails.status = 'active';
+            if ( !result ) {
+                throw new HttpException( responseCode.internalServerError, 'Something went wrong and couln\'t save bank account details. Try again.' );
+            }
+        } else {
+            const bankAccount = await BankAccountModel.create( req.body );
+
+            if ( !bankAccount ) {
+                throw new HttpException( responseCode.internalServerError, 'Something went wrong and couln\'t save bank account details. Try again.' );
+            }
+
+            accountDetails = await BankAccountModel.findOne( { id: bankAccount.insertId } );
+        }
+
+
+        res.status( responseCode.created ).json( {
+            status: responseCode.created,
+            message: 'Bank account added succesfully.',
+            data: accountDetails
+        } );
+    };
+
+
+
+    deleteBankAccount = async ( req, res, next ) => {
+
+        const account = await BankAccountModel.findOne( { id: req.params.id } );
+        if ( !account ) {
+            throw new HttpException( responseCode.notFound, 'No account found' );
+        } else if ( Number( account.user_id ) !== Number( req.currentUser.id ) ) {
+            throw new HttpException( responseCode.unauthorized, 'Permission Denied. You are not the rightful owner of this account.' );
+        }
+
+        const result = await BankAccountModel.delete( req.params.id );
+
+        if ( !result ) {
+            throw new HttpException( responseCode.internalServerError, 'Something went wrong. Couldn\'t delete record at the moment.' );
+        }
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Bank Account deleted successfully.'
+        } );
+
     };
 
     hashPassword = async ( req ) => {

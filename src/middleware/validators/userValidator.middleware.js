@@ -1,5 +1,4 @@
 import { body } from 'express-validator';
-import { userRoles } from '../../utils/userRoles.utils.js';
 
 
 export const createAccountSchema = [
@@ -90,3 +89,4 @@ export const validateLogin = [
         .notEmpty()
         .withMessage( 'Password must be filled' )
 ];
+

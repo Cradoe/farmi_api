@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { accountPaths, accountTag } from "../docs/account.doc.js";
+import { bankAccountPaths, bankAccountTag } from "../docs/bankAccount.doc.js";
 import { farmPaths, farmTag } from "../docs/farm.doc.js";
 import { farmerPaths, farmerTag } from "../docs/farmer.doc.js";
 
@@ -39,12 +40,14 @@ const swaggerConfig = {
     "tags": [
         accountTag,
         farmTag,
-        farmerTag
+        farmerTag,
+        bankAccountTag
     ],
     "paths": {
         ...accountPaths,
         ...farmPaths,
-        ...farmerPaths
+        ...farmerPaths,
+        ...bankAccountPaths
     },
 }
 

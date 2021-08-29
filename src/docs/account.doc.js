@@ -54,7 +54,7 @@ const userAccountRegistrationResponses = {
         "description": "Bad request"
     },
     "401": {
-        "description": "Unathurized request"
+        "description": "Unauthorized request"
     },
     "500": {
         "description": "Internal server error."
