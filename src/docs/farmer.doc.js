@@ -1,9 +1,9 @@
-export const farmerTag = {
+exports.farmerTag = {
     "name": "Farmers",
     "description": "API endpoints for farmers"
 }
 
-export const farmerPaths = {
+exports.farmerPaths = {
     "/farmer/farms": {
         "get": {
             "tags": [ "Farmers" ],

@@ -1,4 +1,4 @@
-export const bankAccountTag = {
+exports.bankAccountTag = {
     "name": "Bank Accounts",
     "description": "API endpoints for bank accounts"
 }
@@ -20,7 +20,7 @@ const accountRegistrationResponses = {
     }
 }
 
-export const bankAccountPaths = {
+exports.bankAccountPaths = {
     "/account/bank": {
         "post": {
             "tags": [ "Bank Accounts" ],

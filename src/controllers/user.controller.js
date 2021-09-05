@@ -1,10 +1,10 @@
-import UserModel from '../models/user.model.js';
-import HttpException from '../utils/HttpException.utils.js';
-import { validationResult } from 'express-validator';
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import { responseCode } from '../utils/responseCode.utils.js';
+const UserModel = require( '../models/user.model.js' );
+const HttpException = require( '../utils/HttpException.utils.js' );
+const { validationResult } = require( 'express-validator' );
+const bcrypt = require( "bcrypt" );
+const jwt = require( "jsonwebtoken" );
+const dotenv = require( "dotenv" );
+const { responseCode } = require( '../utils/responseCode.utils.js' );
 dotenv.config();
 
 /******************************************************************************

@@ -1,7 +1,6 @@
-import { body } from 'express-validator';
+const { body } = require( 'express-validator' );
 
-
-export const createAccountSchema = [
+const createAccountSchema = [
     body( 'firstname' )
         .exists()
         .withMessage( 'Your first name is required' )
@@ -53,7 +52,7 @@ export const createAccountSchema = [
 ];
 
 
-export const createFarmModeratorSchema = [
+exports.createFarmModeratorSchema = [
     body( 'farm_id' )
         .exists()
         .withMessage( 'Farm ID is required' )
@@ -62,7 +61,7 @@ export const createFarmModeratorSchema = [
     ...createAccountSchema
 ];
 
-export const activateAccountSchema = [
+exports.activateAccountSchema = [
     body( 'email' )
         .exists()
         .withMessage( 'Email address is required' )
@@ -76,7 +75,7 @@ export const activateAccountSchema = [
 
 ];
 
-export const validateLogin = [
+exports.validateLogin = [
     body( 'email' )
         .exists()
         .withMessage( 'Email is required' )
@@ -90,3 +89,5 @@ export const validateLogin = [
         .withMessage( 'Password must be filled' )
 ];
 
+
+exports.createAccountSchema = createAccountSchema;

@@ -1,7 +1,7 @@
-import express from "express";
-import { awaitHandlerFactory } from '../middleware/awaitHandlerFactory.middleware.js';
-import { auth } from '../middleware/auth.middleware.js';
-import farmerController from "../controllers/farmer.controller.js";
+const express = require( "express" );
+const { awaitHandlerFactory } = require( '../middleware/awaitHandlerFactory.middleware.js' );
+const { auth } = require( '../middleware/auth.middleware.js' );
+const farmerController = require( "../controllers/farmer.controller.js" );
 
 const router = express.Router();
 
@@ -9,5 +9,4 @@ const router = express.Router();
 router.get( '/farms', auth(), awaitHandlerFactory( farmerController.listFarms ) );
 
 
-
-export default router;
+module.exports = router;

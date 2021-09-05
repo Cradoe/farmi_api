@@ -1,10 +1,10 @@
-import express from "express";
-import accountController from '../controllers/account.controller.js';
-import { auth } from "../middleware/auth.middleware.js";
-import { awaitHandlerFactory } from '../middleware/awaitHandlerFactory.middleware.js';
-import { farmerAccountType, farmModeratorAccountType } from "../middleware/requestAccountType.middleware.js";
-import { addBankAccountSchema } from "../middleware/validators/bankAccount.middleware.js";
-import { createAccountSchema, validateLogin, activateAccountSchema, createFarmModeratorSchema } from '../middleware/validators/userValidator.middleware.js';
+const express = require( "express" );
+const accountController = require( '../controllers/account.controller.js' );
+const { auth } = require( "../middleware/auth.middleware.js" );
+const { awaitHandlerFactory } = require( '../middleware/awaitHandlerFactory.middleware.js' );
+const { farmerAccountType, farmModeratorAccountType } = require( "../middleware/requestAccountType.middleware.js" );
+const { addBankAccountSchema } = require( "../middleware/validators/bankAccount.middleware.js" );
+const { createAccountSchema, validateLogin, activateAccountSchema, createFarmModeratorSchema } = require( '../middleware/validators/userValidator.middleware.js' );
 
 const router = express.Router();
 
@@ -22,4 +22,4 @@ router.post( '/farm_moderator/login', validateLogin, awaitHandlerFactory( accoun
 router.post( '/bank', auth(), addBankAccountSchema, awaitHandlerFactory( accountController.addBankAccount ) );
 router.delete( '/bank/delete/:id', auth(), awaitHandlerFactory( accountController.deleteBankAccount ) );
 
-export default router;
+module.exports = router;

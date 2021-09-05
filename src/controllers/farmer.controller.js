@@ -1,6 +1,6 @@
-import FarmModel from '../models/farm.model.js';
-import HttpException from '../utils/HttpException.utils.js';
-import { responseCode } from '../utils/responseCode.utils.js';
+const FarmModel = require( '../models/farm.model.js' );
+const HttpException = require( '../utils/HttpException.utils.js' );
+const { responseCode } = require( '../utils/responseCode.utils.js' );
 
 
 class FarmerController {
@@ -24,4 +24,4 @@ class FarmerController {
 }
 
 
-export default new FarmerController;
+module.exports = new FarmerController;

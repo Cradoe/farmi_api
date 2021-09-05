@@ -1,17 +1,19 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors"
-import bodyParserPkg from 'body-parser';
+const express = require( "express" );
+const dotenv = require( "dotenv" );
+const cors = require( "cors" );
+const bodyParserPkg = require( 'body-parser' );
 
-import HttpException from './utils/HttpException.utils.js';
-import { errorMiddleware } from './middleware/error.middleware.js';
+const HttpException = require( './utils/HttpException.utils.js' );
+const { errorMiddleware } = require( './middleware/error.middleware.js' );
 
-import swaggerUi from "swagger-ui-express";
-import swaggerApiSpec from './services/swagger.service.js';
+const swaggerUi = require( "swagger-ui-express" );
+const swaggerApiSpec = require( './services/swagger.service.js' );
 
-import accountRouter from './routes/account.route.js';
-import farmRouter from './routes/farm.route.js';
-import farmerRouter from './routes/farmer.route.js';
+const accountRouter = require( './routes/account.route.js' );
+const farmRouter = require( './routes/farm.route.js' );
+const farmerRouter = require( './routes/farmer.route.js' );
+
+const dbConfiguration = require( './models/index.js' );
 
 const { json, urlencoded } = bodyParserPkg;
 
@@ -29,6 +31,12 @@ app.use( json() )
 app.use( urlencoded( { extended: true } ) )
 
 const port = Number( process.env.PORT || 3000 );
+
+dbConfiguration.sequelize.sync().then( () => {
+    console.log( "Nice! Database looks good." );
+} ).catch( err => {
+    console.log( err, "Something went wrong. Couldn't connect to db" );
+} );
 
 app.use(
     "/api-docs",
@@ -52,7 +60,7 @@ app.use( errorMiddleware );
 
 
 
-export const start = () => {
+const start = () => {
     try {
         // starting the server
         app.listen( port, () =>
@@ -61,3 +69,5 @@ export const start = () => {
         console.error( e )
     }
 }
+
+module.exports = start;

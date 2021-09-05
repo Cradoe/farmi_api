@@ -1,4 +1,4 @@
-export const responseCode = {
+module.exports = {
     oK: 200,
     created: 201,
     badRequest: 400,

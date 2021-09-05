@@ -1,9 +1,9 @@
-export const farmTag = {
+exports.farmTag = {
     "name": "Farms",
     "description": "API endpoints for farms"
 }
 
-export const farmPaths = {
+exports.farmPaths = {
     "/farm/create": {
         "post": {
             "tags": [ "Farms" ],

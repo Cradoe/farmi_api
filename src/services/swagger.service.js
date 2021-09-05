@@ -1,8 +1,8 @@
-import dotenv from "dotenv";
-import { accountPaths, accountTag } from "../docs/account.doc.js";
-import { bankAccountPaths, bankAccountTag } from "../docs/bankAccount.doc.js";
-import { farmPaths, farmTag } from "../docs/farm.doc.js";
-import { farmerPaths, farmerTag } from "../docs/farmer.doc.js";
+const dotenv = require( "dotenv" );
+const { accountPaths, accountTag } = require( "../docs/account.doc.js" );
+const { bankAccountPaths, bankAccountTag } = require( "../docs/bankAccount.doc.js" );
+const { farmPaths, farmTag } = require( "../docs/farm.doc.js" );
+const { farmerPaths, farmerTag } = require( "../docs/farmer.doc.js" );
 
 dotenv.config();
 
@@ -55,4 +55,4 @@ const swaggerConfig = {
     },
 }
 
-export default swaggerConfig;
+module.exports = swaggerConfig;

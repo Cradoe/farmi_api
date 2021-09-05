@@ -1,4 +1,4 @@
-export const awaitHandlerFactory = ( middleware ) => {
+exports.awaitHandlerFactory = ( middleware ) => {
     return async ( req, res, next ) => {
         try {
             await middleware( req, res, next )

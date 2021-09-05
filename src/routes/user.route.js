@@ -1,9 +1,9 @@
-import express from "express";
-import userController from '../controllers/user.controller.js';
-import { auth } from '../middleware/auth.middleware.js';
-import { userRoles } from '../utils/userRoles.utils.js';
-import { awaitHandlerFactory } from '../middleware/awaitHandlerFactory.middleware.js';
-import { createAccountSchema, updateUserSchema, validateLogin } from '../middleware/validators/userValidator.middleware.js';
+const express = require( "express" );
+const userController = require( '../controllers/user.controller.js' );
+const { auth } = require( '../middleware/auth.middleware.js' );
+const { userRoles } = require( '../utils/userRoles.utils.js' );
+const { awaitHandlerFactory } = require( '../middleware/awaitHandlerFactory.middleware.js' );
+const { createAccountSchema, updateUserSchema, validateLogin } = require( '../middleware/validators/userValidator.middleware.js' );
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
-import mysql2 from "mysql2";
+const dotenv = require( "dotenv" );
+const mysql2 = require( "mysql2" );
 
 dotenv.config();
 
@@ -62,4 +62,4 @@ const HttpStatusCodes = Object.freeze( {
     ER_DUP_ENTRY: 409
 } );
 
-export default new DBConnection().query;
+module.exports = new DBConnection().query;

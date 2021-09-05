@@ -1,8 +1,8 @@
-import express from "express";
-import farmController from "../controllers/farm.controller.js";
-import { awaitHandlerFactory } from '../middleware/awaitHandlerFactory.middleware.js';
-import { createFarmSchema, updateFarmSchema } from "../middleware/validators/farmValidator.middleware.js";
-import { auth } from '../middleware/auth.middleware.js';
+const express = require( "express" );
+const farmController = require( "../controllers/farm.controller.js" );
+const { awaitHandlerFactory } = require( '../middleware/awaitHandlerFactory.middleware.js' );
+const { createFarmSchema, updateFarmSchema } = require( "../middleware/validators/farmValidator.middleware.js" );
+const { auth } = require( '../middleware/auth.middleware.js' );
 
 
 const router = express.Router();
@@ -18,4 +18,4 @@ router.delete( '/moderator/:id', auth(), awaitHandlerFactory( farmController.del
 
 
 
-export default router;
+module.exports = router;

@@ -1,61 +1,65 @@
-import query from '../db/db-connection.js';
-import { multipleColumnSet } from '../utils/common.utils.js';
+const query = require( '../db/db-connection.js' );
+const { multipleColumnSet } = require( '../utils/common.utils.js' );
 
-class FarmModeratorModel {
-    tableName = 'farm_moderators';
+const FarmModeratorModel = () => {
+    class FarmModerator {
+        tableName = 'farm_moderators';
 
-    find = async ( params = {} ) => {
-        let sql = `SELECT * FROM ${this.tableName}`;
+        find = async ( params = {} ) => {
+            let sql = `SELECT * FROM ${this.tableName}`;
 
-        if ( !Object.keys( params ).length ) {
-            return await query( sql );
+            if ( !Object.keys( params ).length ) {
+                return await query( sql );
+            }
+
+            const { columnSet, values } = multipleColumnSet( params )
+            sql += ` WHERE ${columnSet}`;
+
+            return await query( sql, [ ...values ] );
         }
 
-        const { columnSet, values } = multipleColumnSet( params )
-        sql += ` WHERE ${columnSet}`;
+        findOne = async ( params ) => {
+            const { columnSet, values } = multipleColumnSet( params )
 
-        return await query( sql, [ ...values ] );
+            const sql = `SELECT * FROM ${this.tableName}
+            WHERE ${columnSet}`;
+
+            const result = await query( sql, [ ...values ] );
+
+            // return back the first row 
+            return result[ 0 ];
+        }
+
+        create = async ( user_id ) => {
+            const sql = `INSERT INTO ${this.tableName}
+            (user_id) VALUES (?)`;
+
+            const result = await query( sql, [ user_id ] );
+
+            return result;
+        }
+
+        update = async ( params, id ) => {
+            const { columnSet, values } = multipleColumnSet( params )
+
+            const sql = `UPDATE ${this.tableName} SET ${columnSet} WHERE id = ?`;
+
+            const result = await query( sql, [ ...values, id ] );
+
+            return result;
+        }
+
+        delete = async ( id ) => {
+            const sql = `DELETE FROM ${this.tableName}
+            WHERE id = ?`;
+            const result = await query( sql, [ id ] );
+            const affectedRows = result ? result.affectedRows : 0;
+
+            return affectedRows;
+        }
     }
-
-    findOne = async ( params ) => {
-        const { columnSet, values } = multipleColumnSet( params )
-
-        const sql = `SELECT * FROM ${this.tableName}
-        WHERE ${columnSet}`;
-
-        const result = await query( sql, [ ...values ] );
-
-        // return back the first row 
-        return result[ 0 ];
-    }
-
-    create = async ( user_id ) => {
-        const sql = `INSERT INTO ${this.tableName}
-        (user_id) VALUES (?)`;
-
-        const result = await query( sql, [ user_id ] );
-
-        return result;
-    }
-
-    update = async ( params, id ) => {
-        const { columnSet, values } = multipleColumnSet( params )
-
-        const sql = `UPDATE ${this.tableName} SET ${columnSet} WHERE id = ?`;
-
-        const result = await query( sql, [ ...values, id ] );
-
-        return result;
-    }
-
-    delete = async ( id ) => {
-        const sql = `DELETE FROM ${this.tableName}
-        WHERE id = ?`;
-        const result = await query( sql, [ id ] );
-        const affectedRows = result ? result.affectedRows : 0;
-
-        return affectedRows;
-    }
+    return new FarmModerator;
 }
 
-export default new FarmModeratorModel;
+
+module.exports = FarmModeratorModel;

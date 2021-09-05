@@ -1,9 +1,12 @@
 const query = require( '../db/db-connection.js' );
 const { multipleColumnSet } = require( '../utils/common.utils.js' );
+const { userRoles } = require( '../utils/userRoles.utils.js' );
+const { userTypes } = require( '../utils/userTypes.utils.js' );
 
-const FarmModel = () => {
-    class Farm {
-        tableName = 'farms';
+const AccountModel = () => {
+
+    class Account {
+        tableName = 'users';
 
         find = async ( params = {} ) => {
             let sql = `SELECT * FROM ${this.tableName}`;
@@ -30,19 +33,17 @@ const FarmModel = () => {
             return result[ 0 ];
         }
 
-        create = async ( data ) => {
-            const { farmer_id, farm_category_id, farm_name, latitude, longitude, description, date_founded, land_size } = data;
+        create = async ( { firstname, lastname, email, phone, password, gender, user_type, activation_code, profile_picture = 'default_profile_picture.jpg' } ) => {
             const sql = `INSERT INTO ${this.tableName}
-            (farmer_id, farm_category_id, farm_name, latitude, longitude, description, date_founded, land_size) VALUES (?,?,?,?,?,?,?,?)`;
+            (firstname, lastname, email, phone, password, gender, user_type, profile_picture,activation_code) VALUES (?,?,?,?,?,?,?,?,?)`;
 
-            const result = await query( sql, [ farmer_id, farm_category_id, farm_name, latitude, longitude, description, date_founded, land_size ] );
+            const result = await query( sql, [ firstname, lastname, email, phone, password, gender, user_type, profile_picture, activation_code ] );
 
             return result;
         }
 
         update = async ( params, id ) => {
-            const { farm_name, latitude, longitude, description, land_size } = params;
-            const { columnSet, values } = multipleColumnSet( { farm_name, latitude, longitude, description, land_size } )
+            const { columnSet, values } = multipleColumnSet( params )
 
             const sql = `UPDATE ${this.tableName} SET ${columnSet} WHERE id = ?`;
 
@@ -60,8 +61,9 @@ const FarmModel = () => {
             return affectedRows;
         }
     }
-    return new Farm;
+    return new Account;
 }
 
 
-module.exports = FarmModel;
+
+module.exports = AccountModel;

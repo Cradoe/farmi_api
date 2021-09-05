@@ -1,4 +1,4 @@
-export const accountTag = {
+exports.accountTag = {
     "name": "Account",
     "description": "API endpoints for user accounts in the system"
 }
@@ -61,7 +61,7 @@ const userAccountRegistrationResponses = {
     }
 }
 
-export const accountPaths = {
+exports.accountPaths = {
     "/account/farmer/login": { ...loginSchema },
     "/account/farmer/register": {
         "post": {

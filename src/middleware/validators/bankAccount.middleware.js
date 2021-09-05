@@ -1,7 +1,7 @@
-import { body } from 'express-validator';
+const { body } = require( 'express-validator' );
 
 
-export const addBankAccountSchema = [
+exports.addBankAccountSchema = [
     body( 'account_name' )
         .exists()
         .withMessage( 'Account name is required' )

@@ -1,17 +1,17 @@
-import { userTypes } from "../utils/userTypes.utils.js"
+const userTypes = require( "../utils/userTypes.utils.js" );
 
-export const farmerAccountType = ( req, res, next ) => {
+exports.farmerAccountType = ( req, res, next ) => {
     req.body.user_type = userTypes.farmer;
     next();
 }
 
-export const investorAccountType = ( req, res, next ) => {
+exports.investorAccountType = ( req, res, next ) => {
     req.body.user_type = userTypes.investor;
     next();
 }
 
 
-export const farmModeratorAccountType = ( req, res, next ) => {
+exports.farmModeratorAccountType = ( req, res, next ) => {
     req.body.user_type = userTypes.moderator;
     next();
 }

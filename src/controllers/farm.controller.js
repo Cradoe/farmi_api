@@ -1,7 +1,7 @@
-import FarmModel from '../models/farm.model.js';
-import HttpException from '../utils/HttpException.utils.js';
-import { responseCode } from '../utils/responseCode.utils.js';
-import { checkValidation } from '../utils/auth.utils.js';
+const FarmModel = require( '../models/farm.model.js' );
+const HttpException = require( '../utils/HttpException.utils.js' );
+const { responseCode } = require( '../utils/responseCode.utils.js' );
+const { checkValidation } = require( '../utils/auth.utils.js' );
 
 
 class FarmController {
@@ -80,4 +80,4 @@ class FarmController {
 }
 
 
-export default new FarmController;
+module.exports = new FarmController;
