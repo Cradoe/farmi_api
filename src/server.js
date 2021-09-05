@@ -51,7 +51,7 @@ app.use( `/farmer`, farmerRouter );
 
 // 404 error
 app.all( '*', ( req, res, next ) => {
-    const err = new HttpException( 404, 'Endpoint Not Found' );
+    const err = new HttpException( res, 404, 'Endpoint Not Found' );
     next( err );
 } );
 

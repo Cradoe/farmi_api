@@ -7,8 +7,6 @@ exports.createFarmSchema = [
     body( 'farm_name' )
         .exists()
         .withMessage( 'Farm name is required.' )
-        .isAlphanumeric()
-        .withMessage( 'Farm name must be letters' )
         .isLength( { min: 3 } )
         .withMessage( 'Must be at least 3 chars long' ),
     body( 'latitude' )
@@ -41,8 +39,6 @@ exports.updateFarmSchema = [
     body( 'farm_name' )
         .exists()
         .withMessage( 'Farm name is required.' )
-        .isAlphanumeric()
-        .withMessage( 'Farm name must be letters' )
         .isLength( { min: 3 } )
         .withMessage( 'Must be at least 3 chars long' ),
     body( 'latitude' )

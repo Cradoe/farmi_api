@@ -8,7 +8,6 @@ const { auth } = require( '../middleware/auth.middleware.js' );
 const router = express.Router();
 
 
-router.post( '/', auth(), createFarmSchema, awaitHandlerFactory( farmController.createFarm ) );
 router.post( '/create', auth(), createFarmSchema, awaitHandlerFactory( farmController.createFarm ) );
 router.patch( '/edit/:id', auth(), updateFarmSchema, awaitHandlerFactory( farmController.editFarm ) );
 router.delete( '/delete/:id', auth(), awaitHandlerFactory( farmController.deleteFarm ) );

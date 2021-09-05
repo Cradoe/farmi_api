@@ -1,7 +1,7 @@
 const HttpException = require( "../utils/HttpException.utils.js" );
-const UserModel = require( "../models/user.model.js" );
 const jwt = require( "jsonwebtoken" );
 const dotenv = require( "dotenv" );
+const { Users: UserModel } = require( '../models/index.js' );
 
 dotenv.config();
 

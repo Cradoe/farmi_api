@@ -17,9 +17,11 @@ exports.generateToken = ( accountId ) => {
     return token;
 }
 
-exports.checkValidation = ( req ) => {
+exports.checkValidation = async ( req, res ) => {
     const errors = validationResult( req )
     if ( !errors.isEmpty() ) {
-        throw new HttpException( responseCode.badRequest, errors.errors[ 0 ].msg || 'One or more required data is not correctly specified.', errors );
+        new HttpException( res, responseCode.badRequest, errors.errors[ 0 ].msg || 'One or more required data is not correctly specified.', errors );
+        return false;
     }
+    return true;
 }

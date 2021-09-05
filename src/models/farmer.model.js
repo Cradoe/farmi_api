@@ -11,7 +11,11 @@ module.exports = ( sequelize, DataTypes ) => {
          */
         static associate ( models ) {
             // define association here
-
+            this.belongsTo( models.Users, {
+                as: 'Users',
+                foreignKey: 'user_id',
+                constraints: false
+            } );
         }
     };
     FarmerModel.init( {
@@ -32,10 +36,6 @@ module.exports = ( sequelize, DataTypes ) => {
         modelName: 'Farmers',
         underscored: true
     } );
-    // FarmerModel.belongsTo( models.Users, {
-    //     as: 'Users',
-    //     foreignKey: 'user_id',
-    //     constraints: false
-    // } );
+
     return FarmerModel;
 };

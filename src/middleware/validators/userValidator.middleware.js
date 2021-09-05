@@ -4,15 +4,11 @@ const createAccountSchema = [
     body( 'firstname' )
         .exists()
         .withMessage( 'Your first name is required' )
-        .isAlpha()
-        .withMessage( 'Must be only alphabetical chars' )
         .isLength( { min: 3 } )
         .withMessage( 'Must be at least 3 chars long' ),
     body( 'lastname' )
         .exists()
         .withMessage( 'Your last name is required' )
-        .isAlpha()
-        .withMessage( 'Must be only alphabetical chars' )
         .isLength( { min: 3 } )
         .withMessage( 'Must be at least 3 chars long' ),
     body( 'phone' )
