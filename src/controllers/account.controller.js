@@ -171,30 +171,7 @@ class AccountController {
 
 
 
-    deleteBankAccount = async ( req, res, next ) => {
 
-        const moderatorAccount = await FarmModeratorModel.findOne( { where: { user_id: req.params.user_id, farm_id: req.params.user_id } } );
-        if ( !moderatorAccount ) {
-            new HttpException( res, responseCode.notFound, 'No account found' );
-            return;
-        } else if ( moderatorAccount.dataValues.status === 'deleted' ) {
-            new HttpException( res, responseCode.unauthorized, 'This moderator account is no longer valid.' );
-            return;
-        }
-
-        const result = await FarmModeratorModel.update( { status: 'deleted' }, { where: { id: moderatorAccount.dataValues.id } } );
-
-        if ( !result ) {
-            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Couldn\'t delete record at the moment.' );
-            return;
-        }
-
-        res.status( responseCode.oK ).json( {
-            status: responseCode.oK,
-            message: 'Moderator Account deleted successfully.'
-        } );
-
-    };
 
     sendActivationCode = async ( { email: to, activation_code }, callback ) => {
 

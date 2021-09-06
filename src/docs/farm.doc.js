@@ -142,6 +142,41 @@ exports.farmPaths = {
             }
         }
 
+    },
+    "/farm/{farm_id}/moderator/delete/{user_id}": {
+        "delete": {
+            "tags": [ "Farms" ],
+            "summary": "Endpoint to delete farm moderator",
+            "description": "Returns message",
+            "parameters": [
+                {
+                    "name": "farm_id",
+                    "in": "path",
+                    "description": "ID of farm",
+                    "required": true
+                }, {
+                    "name": "user_id",
+                    "in": "path",
+                    "description": "The user ID",
+                    "required": true
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "oK"
+                },
+                "401": {
+                    "description": "Unathorized permission denied."
+                },
+                "404": {
+                    "description": "No record found"
+                },
+                "500": {
+                    "description": "Internal server error."
+                }
+            }
+        }
+
     }
 }
 

@@ -17,7 +17,6 @@ router.post( '/farmer/register', createAccountSchema, farmerAccountType, awaitHa
 
 router.post( '/farm_moderator/register', auth(), createFarmModeratorSchema, farmModeratorAccountType, awaitHandlerFactory( accountController.createFarmModeratorAccount ) );
 router.post( '/farm_moderator/login', validateLogin, awaitHandlerFactory( accountController.farmModeratorLogin ) );
-router.delete( '/farm_moderator/:farm_id/:user_id', auth(), awaitHandlerFactory( accountController.deleteFarmModerator ) );
 
 
 router.post( '/bank', auth(), addBankAccountSchema, awaitHandlerFactory( accountController.addBankAccount ) );
