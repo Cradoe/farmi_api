@@ -55,6 +55,7 @@ exports.createFarmModeratorSchema = [
     ...createAccountSchema
 ];
 
+
 exports.activateAccountSchema = [
     body( 'email' )
         .exists()
