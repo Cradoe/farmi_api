@@ -15,7 +15,7 @@ router.post( '/verify', activateAccountSchema, awaitHandlerFactory( accountContr
 router.post( '/farmer/login', validateLogin, awaitHandlerFactory( accountController.farmerLogin ) );
 router.post( '/farmer/register', createAccountSchema, farmerAccountType, awaitHandlerFactory( accountController.createFarmerAccount ) );
 
-router.post( '/farm_moderator/register', farmModeratorAccountType, awaitHandlerFactory( accountController.createFarmModeratorAccount ) );
+router.post( '/farm_moderator/register', auth(), createFarmModeratorSchema, farmModeratorAccountType, awaitHandlerFactory( accountController.createFarmModeratorAccount ) );
 router.post( '/farm_moderator/login', validateLogin, awaitHandlerFactory( accountController.farmModeratorLogin ) );
 
 

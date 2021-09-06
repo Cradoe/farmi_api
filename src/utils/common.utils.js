@@ -1,18 +1,3 @@
-exports.multipleColumnSet = ( object, concatString = ', ' ) => {
-    if ( typeof object !== 'object' ) {
-        throw new Error( 'Invalid input' );
-    }
-
-    const keys = Object.keys( object );
-    const values = Object.values( object );
-
-    let columnSet = keys.map( key => `${key} = ?` ).join( concatString );
-
-    return {
-        columnSet,
-        values
-    }
-}
 const getRandomNumber = ( e = 0, t = 100 ) => {
     return Math.random() * ( t - e ) + e;
 }

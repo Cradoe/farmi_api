@@ -1,65 +1,39 @@
-const query = require( '../db/db-connection.js' );
-const { multipleColumnSet } = require( '../utils/common.utils.js' );
-
-const FarmModeratorModel = () => {
-    class FarmModerator {
-        tableName = 'farm_moderators';
-
-        find = async ( params = {} ) => {
-            let sql = `SELECT * FROM ${this.tableName}`;
-
-            if ( !Object.keys( params ).length ) {
-                return await query( sql );
-            }
-
-            const { columnSet, values } = multipleColumnSet( params )
-            sql += ` WHERE ${columnSet}`;
-
-            return await query( sql, [ ...values ] );
+'use strict';
+const {
+    Model
+} = require( 'sequelize' );
+module.exports = ( sequelize, DataTypes ) => {
+    class FarmModeratorModel extends Model {
+        /**
+         * Helper method for defining associations.
+         * This method is not a part of Sequelize lifecycle.
+         * The `models/index` file will call this method automatically.
+         */
+        static associate ( models ) {
+            // define association here
+            this.belongsTo( models.Users, {
+                as: 'Users',
+                foreignKey: 'user_id',
+                constraints: false
+            } );
+            this.belongsTo( models.Users, {
+                as: 'Farms',
+                foreignKey: 'farm_id',
+                constraints: false
+            } );
         }
-
-        findOne = async ( params ) => {
-            const { columnSet, values } = multipleColumnSet( params )
-
-            const sql = `SELECT * FROM ${this.tableName}
-            WHERE ${columnSet}`;
-
-            const result = await query( sql, [ ...values ] );
-
-            // return back the first row 
-            return result[ 0 ];
+    };
+    FarmModeratorModel.init( {
+        status: {
+            type: DataTypes.ENUM,
+            values: [ 'active', 'blocked', 'deleted' ],
+            defaultValue: 'active'
         }
+    }, {
+        sequelize,
+        modelName: 'FarmModerators',
+        underscored: true
+    } );
 
-        create = async ( user_id ) => {
-            const sql = `INSERT INTO ${this.tableName}
-            (user_id) VALUES (?)`;
-
-            const result = await query( sql, [ user_id ] );
-
-            return result;
-        }
-
-        update = async ( params, id ) => {
-            const { columnSet, values } = multipleColumnSet( params )
-
-            const sql = `UPDATE ${this.tableName} SET ${columnSet} WHERE id = ?`;
-
-            const result = await query( sql, [ ...values, id ] );
-
-            return result;
-        }
-
-        delete = async ( id ) => {
-            const sql = `DELETE FROM ${this.tableName}
-            WHERE id = ?`;
-            const result = await query( sql, [ id ] );
-            const affectedRows = result ? result.affectedRows : 0;
-
-            return affectedRows;
-        }
-    }
-    return new FarmModerator;
-}
-
-
-module.exports = FarmModeratorModel;
+    return FarmModeratorModel;
+};
