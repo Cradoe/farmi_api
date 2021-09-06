@@ -55,7 +55,7 @@ exports.crowdFundPaths = {
             }
         }
     },
-    "/crowd_fund/farm/{farm_id}": {
+    "/crowd_fund/{farm_id}": {
         "get": {
             "tags": [ "CrowdFund" ],
             "summary": "List all crowd funds of specified farm.",

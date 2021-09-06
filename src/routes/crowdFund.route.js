@@ -7,7 +7,8 @@ const crowdFundController = require( "../controllers/crowdFund.controller.js" );
 const router = express.Router();
 
 router.post( '/apply', auth(), applyForCrowdFundSchema, awaitHandlerFactory( crowdFundController.applyForCrowdFund ) );
-router.get( '/farm/:farm_id', auth(), awaitHandlerFactory( crowdFundController.getAllFarmCrowdFunds ) );
+router.get( '/:farm_id', auth(), awaitHandlerFactory( crowdFundController.getAllFarmCrowdFunds ) );
+router.delete( '/:id', auth(), awaitHandlerFactory( crowdFundController.deletePendingCrowdFund ) );
 
 
 
