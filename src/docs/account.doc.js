@@ -88,7 +88,7 @@ exports.accountPaths = {
                                     "type": "string"
                                 },
                                 "gender": {
-                                    "type": "char"
+                                    "type": "string"
                                 },
                                 "password": {
                                     "type": "string"
@@ -135,7 +135,7 @@ exports.accountPaths = {
                                     "type": "string"
                                 },
                                 "gender": {
-                                    "type": "char"
+                                    "type": "string"
                                 },
                                 "password": {
                                     "type": "string"
