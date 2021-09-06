@@ -1,6 +1,7 @@
 const dotenv = require( "dotenv" );
 const { accountPaths, accountTag } = require( "../docs/account.doc.js" );
 const { bankAccountPaths, bankAccountTag } = require( "../docs/bankAccount.doc.js" );
+const { crowdFundTag, crowdFundPaths } = require( "../docs/crowdFund.doc.js" );
 const { farmPaths, farmTag } = require( "../docs/farm.doc.js" );
 const { farmerPaths, farmerTag } = require( "../docs/farmer.doc.js" );
 
@@ -45,13 +46,15 @@ const swaggerConfig = {
         accountTag,
         farmTag,
         farmerTag,
-        bankAccountTag
+        bankAccountTag,
+        crowdFundTag
     ],
     "paths": {
         ...accountPaths,
         ...farmPaths,
         ...farmerPaths,
-        ...bankAccountPaths
+        ...bankAccountPaths,
+        ...crowdFundPaths
     },
 }
 

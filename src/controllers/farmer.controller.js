@@ -1,6 +1,6 @@
 const { Farms: FarmModel } = require( '../models/index.js' );
 const HttpException = require( '../utils/HttpException.utils.js' );
-const { responseCode } = require( '../utils/responseCode.utils.js' );
+const responseCode = require( '../utils/responseCode.utils.js' );
 
 
 class FarmerController {

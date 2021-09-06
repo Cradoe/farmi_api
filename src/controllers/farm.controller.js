@@ -88,7 +88,6 @@ class FarmController {
     };
 
     deleteFarmModerator = async ( req, res, next ) => {
-
         const moderatorAccount = await FarmModeratorModel.findOne( { where: { user_id: req.params.user_id, farm_id: req.params.user_id } } );
         if ( !moderatorAccount ) {
             new HttpException( res, responseCode.notFound, 'No account found' );

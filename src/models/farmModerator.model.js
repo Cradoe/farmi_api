@@ -16,7 +16,7 @@ module.exports = ( sequelize, DataTypes ) => {
                 foreignKey: 'user_id',
                 constraints: false
             } );
-            this.belongsTo( models.Users, {
+            this.belongsTo( models.Farms, {
                 as: 'Farms',
                 foreignKey: 'farm_id',
                 constraints: false

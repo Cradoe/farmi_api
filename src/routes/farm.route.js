@@ -12,7 +12,10 @@ router.post( '/create', auth(), createFarmSchema, awaitHandlerFactory( farmContr
 router.patch( '/edit/:id', auth(), updateFarmSchema, awaitHandlerFactory( farmController.editFarm ) );
 router.delete( '/delete/:id', auth(), awaitHandlerFactory( farmController.deleteFarm ) );
 
-router.delete( '/:farm_id/moderator/delete/:id', auth(), awaitHandlerFactory( farmController.deleteFarmModerator ) );
+router.delete( '/:farm_id/moderator/delete/:user_id', auth(), awaitHandlerFactory( farmController.deleteFarmModerator ) );
+
+
+router.post( '/crowd_fund/apply', auth(), updateFarmSchema, awaitHandlerFactory( farmController.editFarm ) );
 
 
 
