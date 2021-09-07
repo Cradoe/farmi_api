@@ -29,3 +29,16 @@ exports.applyForCrowdFundSchema = [
         .withMessage( 'Maturity date founded must be a valid date.' )
 
 ];
+exports.investInCrowdFundSchema = [
+    body( 'crowd_fund_id' )
+        .exists()
+        .withMessage( 'Crowd fund ID is required' ),
+    body( 'amount' )
+        .exists()
+        .withMessage( 'You need to specify the amount needed.' )
+        .isLength( { min: 2 } )
+        .withMessage( 'Must be at least 2 chars long' ),
+    body( 'txref' )
+        .exists()
+        .withMessage( 'Transaction reference is required' )
+];

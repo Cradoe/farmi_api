@@ -15,6 +15,7 @@ exports.auth = ( ...roles ) => {
 
             if ( ( !authHeader || !authHeader.startsWith( bearer ) ) && !JWT_TEST_USER_ID ) {
                 new HttpException( res, 401, 'Access denied. No credentials sent!' );
+                return;
             }
 
             let token, secretKey, decoded;
@@ -26,7 +27,7 @@ exports.auth = ( ...roles ) => {
                 // Verify Token
                 decoded = jwt.verify( token, secretKey );
             }
-            await UserModel.findOne( { where: { id: decoded ? decoded.user_id : JWT_TEST_USER_ID } } ).then( user => {
+            await UserModel.findByPk( decoded ? decoded.user_id : JWT_TEST_USER_ID ).then( user => {
                 if ( user ) {
 
                     // check if the current user is the owner user
@@ -37,12 +38,14 @@ exports.auth = ( ...roles ) => {
                     // the user will get this error
                     if ( !ownerAuthorized && roles.length && !roles.includes( user.role ) ) {
                         new HttpException( res, 401, 'Unauthorized' );
+                        return;
                     }
                     // if the user has permissions
                     req.currentUser = user;
                     next();
                 } else {
                     new HttpException( res, 401, 'Authentication failed!' );
+                    return;
                 }
             } );
 
