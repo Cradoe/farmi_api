@@ -39,10 +39,10 @@ module.exports = {
   }
   ,
   "production": {
-    "username": "ba9ebd506c114f",
-    "password": "8e3138ec",
-    "database": "heroku_df536a102839664",
-    "host": "us-cdbr-east-04.cleardb.com",
+    "username": process.env.DB_USER,
+    "password": process.env.DB_PASS,
+    "database": process.env.DB_NAME,
+    "host": process.env.DB_HOST,
     "dialect": "mysql",
     "pool": {
 

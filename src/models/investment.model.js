@@ -12,13 +12,13 @@ module.exports = ( sequelize, DataTypes ) => {
         static associate ( models ) {
             // define association here
             this.belongsTo( models.CrowdFunds, {
-                as: 'CrowdFunds',
+                as: 'crowdFund',
                 foreignKey: 'crowd_fund_id',
                 constraints: false
             } );
             this.belongsTo( models.Users, {
-                as: 'Users',
-                foreignKey: 'investor',
+                as: 'account',
+                foreignKey: 'investor_id',
                 constraints: false
             } );
         }
@@ -40,14 +40,10 @@ module.exports = ( sequelize, DataTypes ) => {
             type: DataTypes.STRING( 20 ),
             allowNull: false
         },
-        description: {
-            type: DataTypes.TEXT,
-            allowNull: false
-        },
         status: {
             type: DataTypes.ENUM,
-            values: [ 'pending', 'active', 'blocked', 'deleted' ],
-            defaultValue: 'pending'
+            values: [ 'active', 'blocked', 'deleted' ],
+            defaultValue: 'active'
         }
     }, {
         sequelize,

@@ -55,6 +55,21 @@ exports.bankAccountPaths = {
             }
         }
     },
+    "/account/bank/list": {
+        "get": {
+            "tags": [ "Bank Accounts" ],
+            "summary": "List all user bank accounts.",
+            "description": "Returns array of data",
+            "responses": {
+                "200": {
+                    "description": "oK"
+                },
+                "404": {
+                    "description": "No record found."
+                }
+            }
+        }
+    },
     "/account/bank/delete/{id}": {
         "delete": {
             "tags": [ "Bank Accounts" ],

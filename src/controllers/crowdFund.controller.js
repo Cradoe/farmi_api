@@ -4,7 +4,7 @@ const responseCode = require( '../utils/responseCode.utils.js' );
 const { checkValidation } = require( '../utils/auth.utils.js' );
 const { Op } = require( "sequelize" );
 
-const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel } = require( '../models/index.js' );
+const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel } = require( '../models/index.js' );
 
 class CrowdFundController {
 
@@ -47,11 +47,9 @@ class CrowdFundController {
 
     getAllActiveCrowdFunds = async ( req, res, next ) => {
         const farmCrowdFunds = await CrowdFundModel.findAll( {
-            include: [
-                { model: 'farms', attributes: [ 'farm_id', 'farm_name', 'date_founded', 'description', 'land_size', 'latitude', 'longitude', 'logo' ] }
-            ],
-            attributes: [ 'amount_needed', 'investment_deadline', 'maturity_date', 'roi', 'description', 'status', 'created_at', 'updated_at' ]
-        }, { where: { status: 'active' } } );
+            where: { status: 'active' },
+            include: [ { model: FarmModel, as: 'farm', where: { status: 'active' } } ]
+        } );
 
         if ( !farmCrowdFunds || farmCrowdFunds.length === 0 ) {
             new HttpException( res, responseCode.notFound, 'There is currently no crowd funds at the moment.' );
@@ -82,7 +80,9 @@ class CrowdFundController {
     };
 
     getDetailsOfCrowdFund = async ( req, res, next ) => {
-        const farmCrowdFunds = await CrowdFundModel.findByPk( req.params.crowd_fund_id );
+        const farmCrowdFunds = await CrowdFundModel.findByPk( req.params.crowd_fund_id, {
+            include: [ { model: FarmModel, as: 'farm', where: { status: 'active' } } ]
+        } );
         if ( !farmCrowdFunds ) {
             new HttpException( res, responseCode.notFound, 'Unable to retrieve any record.' );
             return;
@@ -100,20 +100,23 @@ class CrowdFundController {
 
         let crowdFund = await CrowdFundModel.findByPk( req.params.id );
         if ( !crowdFund ) {
-            new HttpException( res, responseCode.notFound, 'Cr' );
+            new HttpException( res, responseCode.notFound, 'No crowd fund found.' );
+            return;
+        } else if ( crowdFund && crowdFund.dataValues.status !== 'pending' ) {
+            new HttpException( res, responseCode.badRequest, 'You cannot delete this crowd fund.' );
+            return;
+        }
+        const farmRecord = await FarmModel.findByPk( crowdFund.dataValues.farm_id );
+        if ( !farmRecord ) {
+            new HttpException( res, responseCode.badRequest, 'Something went wrong.' );
+            return;
+        } else if ( farmRecord && farmRecord.dataValues.farmer_id !== req.currentUser.id ) {
+            new HttpException( res, responseCode.unauthorized, 'You don\'t have permission to perform this operation.' );
             return;
         }
 
-        const moderatorAccount = await FarmModeratorModel.findOne( { where: { user_id: req.params.user_id, farm_id: req.params.user_id } } );
-        if ( !moderatorAccount ) {
-            new HttpException( res, responseCode.notFound, 'No account found' );
-            return;
-        } else if ( moderatorAccount.dataValues.status === 'deleted' ) {
-            new HttpException( res, responseCode.unauthorized, 'This moderator account is no longer valid.' );
-            return;
-        }
 
-        const result = await FarmModeratorModel.update( { status: 'deleted' }, { where: { id: moderatorAccount.dataValues.id } } );
+        const result = await CrowdFundModel.update( { status: 'deleted' }, { where: { id: req.params.id } } );
 
         if ( !result ) {
             new HttpException( res, responseCode.internalServerError, 'Something went wrong. Couldn\'t delete record at the moment.' );
@@ -122,28 +125,7 @@ class CrowdFundController {
 
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
-            message: 'Moderator Account deleted successfully.'
-        } );
-
-    };
-
-    getCrowdFunds = async ( req, res, next ) => {
-        const farmCrowdFunds = await CrowdFundModel.findAll( {
-            include: [
-                { model: 'farms', attributes: [ 'farm_id', 'farm_name', 'date_founded', 'description', 'land_size', 'latitude', 'longitude', 'logo' ] }
-            ],
-            attributes: [ 'amount_needed', 'investment_deadline', 'maturity_date', 'roi', 'description', 'status', 'created_at', 'updated_at' ]
-        }, { where: { status: 'active' } } );
-
-        if ( !farmCrowdFunds || farmCrowdFunds.length === 0 ) {
-            new HttpException( res, responseCode.notFound, 'There is currently no crowd funds at the moment.' );
-            return;
-        }
-
-        res.status( responseCode.created ).json( {
-            status: responseCode.created,
-            message: 'List of crowdfunds fetched successfully.',
-            data: farmCrowdFunds
+            message: 'Crowd Fund deleted successfully.'
         } );
 
     };
@@ -152,26 +134,90 @@ class CrowdFundController {
         const isValid = await checkValidation( req, res );
         if ( !isValid ) return;
 
-        const investment = await InvestmentModel.findOne( { where: { payment_txref: req.body.txref } } );
+        let investment = await InvestmentModel.findOne( { where: { txref: req.body.txref } } );
         if ( investment ) {
             new HttpException( res, responseCode.badRequest, 'Cannot save duplicate transactions.' );
             return;
         }
         req.body.investor_id = req.currentUser.id;
-        let crowdFund = await InvestmentModel.create( req.body );
-        if ( !crowdFund ) {
+
+        investment = await InvestmentModel.create( req.body );
+        if ( !investment ) {
             new HttpException( res, responseCode.internalServerError, "Something went wrong" );
             return;
         }
 
+        // let's check if amount needed has been raised
+        const crowdFund = await CrowdFundModel.findByPk( req.body.crowd_fund_id );
+        if ( !crowdFund ) {
+            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Kindly contact our support centre.' );
+            return;
+        }
+        const allInvestments = await InvestmentModel.findAll( { where: { crowd_fund_id: req.body.crowd_fund_id } } );
+        if ( !allInvestments ) {
+            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Kindly contact our support centre.' );
+            return;
+        }
+
+        let amountAvailable = 0;
+
+        allInvestments.forEach( investment => {
+            amountAvailable += Number( investment.amount );
+        } );
+
+        if ( crowdFund.dataValues.amount_needed <= amountAvailable ) {
+            this._updateCrowdFundStatus( req.body.crowd_fund_id );
+        }
 
         res.status( responseCode.created ).json( {
             status: responseCode.created,
-            message: 'Your application has been received. It takes about 5 working days for our team to review your applicaton.',
-            data: crowdFund.dataValues
+            message: 'Good job! Your money is working already.',
+            data: investment.dataValues
         } );
 
     };
+
+    getCrowdFundInvestments = async ( req, res, next ) => {
+
+        const crowdFund = await CrowdFundModel.findByPk( req.params.crowd_fund_id );
+        if ( !crowdFund ) {
+            new HttpException( res, responseCode.notFound, 'No details found' );
+            return;
+        }
+        const investments = await InvestmentModel.findAll( {
+            where: { crowd_fund_id: req.params.crowd_fund_id },
+            include: [ { model: UserModel, as: 'account' } ]
+        } );
+        if ( !investments || investments.length === 0 ) {
+            new HttpException( res, responseCode.notFound, 'There is no investment for this crowd fund.' );
+            return;
+        }
+
+        let amountAvailable = 0;
+
+        investments.forEach( investment => {
+            amountAvailable += Number( investment.amount );
+        } );
+
+        const amountRemaining = Number( crowdFund.dataValues.amount_needed ) - Number( amountAvailable );
+
+        res.status( responseCode.created ).json( {
+            status: responseCode.created,
+            message: 'Crowdfund investments fetched successfully. fetched successfully.',
+            data: {
+                amountNeeded: crowdFund.dataValues.amount_needed,
+                amountAvailable,
+                amountRemaining,
+                investments
+            }
+        } );
+
+    };
+
+    _updateCrowdFundStatus = async ( crowd_fund_id ) => {
+        const update = await CrowdFundModel.update( { status: 'running' }, { where: { id: crowd_fund_id } } );
+        return;
+    }
 }
 
 

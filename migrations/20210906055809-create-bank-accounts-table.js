@@ -27,7 +27,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.ENUM,
-        values: [ 'active', 'blocked', 'deleted', 'pending' ]
+        values: [ 'active', 'blocked', 'deleted' ]
       },
       user_id: {
         type: Sequelize.INTEGER,

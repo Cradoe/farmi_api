@@ -17,7 +17,7 @@ class FarmerController {
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
             message: 'Farms fetched successfully.',
-            data: farms.dataValues
+            data: farms
         } );
 
     };

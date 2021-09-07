@@ -121,7 +121,38 @@ exports.crowdFundPaths = {
         }
 
 
-    }, "/crowd_fund/invest": {
+    },
+    "/crowd_fund/delete/{id}": {
+        "delete": {
+            "tags": [ "CrowdFund" ],
+            "summary": "Endpoint to delete ONLY PENDING crowd fund",
+            "description": "Returns message",
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of crowd fund to delete",
+                    "required": true
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "oK"
+                },
+                "401": {
+                    "description": "Unauthorized permission denied."
+                },
+                "404": {
+                    "description": "No record found"
+                },
+                "500": {
+                    "description": "Internal server error."
+                }
+            }
+        }
+
+    },
+    "/crowd_fund/invest": {
         "post": {
             "tags": [ "CrowdFund" ],
             "summary": "Endpoint to invest in crowd funding.",
@@ -162,6 +193,31 @@ exports.crowdFundPaths = {
                 }
             }
         }
+    },
+    "/crowd_fund/investments/{crowd_fund_id}": {
+        "get": {
+            "tags": [ "CrowdFund" ],
+            "summary": "List all investments of specified crowd funds.",
+            "description": "Returns array of investments",
+            "parameters": [
+                {
+                    "name": "crowd_fund_id",
+                    "in": "path",
+                    "description": "ID of crowd fund",
+                    "required": true
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "oK"
+                },
+                "404": {
+                    "description": "No record found."
+                }
+            }
+        }
+
+
     }
 }
 

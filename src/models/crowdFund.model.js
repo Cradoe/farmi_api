@@ -12,7 +12,7 @@ module.exports = ( sequelize, DataTypes ) => {
         static associate ( models ) {
             // define association here
             this.belongsTo( models.Farms, {
-                as: 'Farms',
+                as: 'farm',
                 foreignKey: 'farm_id',
                 constraints: false
             } );
@@ -45,7 +45,7 @@ module.exports = ( sequelize, DataTypes ) => {
         },
         status: {
             type: DataTypes.ENUM,
-            values: [ 'pending', 'active', 'blocked', 'deleted' ],
+            values: [ 'pending', 'active', 'running', 'blocked', 'deleted' ],
             defaultValue: 'pending'
         }
     }, {

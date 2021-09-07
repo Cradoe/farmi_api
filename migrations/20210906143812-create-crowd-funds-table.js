@@ -41,7 +41,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.ENUM,
-        values: [ 'pending', 'active', 'blocked', 'deleted' ],
+        values: [ 'pending', 'active', 'running', 'blocked', 'deleted' ],
         defaultValue: 'pending'
       },
       created_at: {

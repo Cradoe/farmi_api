@@ -20,6 +20,7 @@ router.post( '/farm_moderator/login', validateLogin, awaitHandlerFactory( accoun
 
 
 router.post( '/bank', auth(), addBankAccountSchema, awaitHandlerFactory( accountController.addBankAccount ) );
+router.get( '/bank/list', auth(), awaitHandlerFactory( accountController.getUserBankAccounts ) );
 router.delete( '/bank/delete/:id', auth(), awaitHandlerFactory( accountController.deleteBankAccount ) );
 
 module.exports = router;

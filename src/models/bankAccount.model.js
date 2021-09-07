@@ -12,7 +12,7 @@ module.exports = ( sequelize, DataTypes ) => {
         static associate ( models ) {
             // define association here
             this.belongsTo( models.Users, {
-                as: 'Users',
+                as: 'account',
                 foreignKey: 'user_id',
                 constraints: false
             } );
@@ -37,7 +37,7 @@ module.exports = ( sequelize, DataTypes ) => {
         },
         status: {
             type: DataTypes.ENUM,
-            values: [ 'active', 'blocked', 'deleted', 'pending' ],
+            values: [ 'active', 'blocked', 'deleted' ],
             defaultValue: 'active'
         }
     }, {

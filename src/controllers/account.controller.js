@@ -260,26 +260,31 @@ class AccountController {
             //change status from deleted
             const result = await BankAccountModel.update( { status: 'active' }, { where: { id: accountDetails.dataValues.id } } );
             accountDetails.dataValues.status = 'active';
-
-            if ( !result ) {
-                new HttpException( res, responseCode.internalServerError, 'Something went wrong and couln\'t save bank account details. Try again.' );
-                return;
-            }
-        } else {
-            const bankAccount = await BankAccountModel.create( req.body );
-
-            if ( bankAccount ) {
+            if ( result ) {
                 res.status( responseCode.created ).json( {
                     status: responseCode.created,
                     message: 'Bank account added succesfully.',
-                    data: accountDetails
+                    data: accountDetails.dataValues
                 } );
-            } else {
+            }
+            else {
                 new HttpException( res, responseCode.internalServerError, 'Something went wrong and couln\'t save bank account details. Try again.' );
                 return;
             }
-
         }
+        accountDetails = await BankAccountModel.create( req.body );
+
+        if ( accountDetails ) {
+            res.status( responseCode.created ).json( {
+                status: responseCode.created,
+                message: 'Bank account added succesfully.',
+                data: accountDetails.dataValues
+            } );
+        } else {
+            new HttpException( res, responseCode.internalServerError, 'Something went wrong and couln\'t save bank account details. Try again.' );
+            return;
+        }
+
 
     };
 
@@ -304,6 +309,24 @@ class AccountController {
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
             message: 'Bank Account deleted successfully.'
+        } );
+
+    };
+
+
+    getUserBankAccounts = async ( req, res, next ) => {
+
+        let bankAccounts = await BankAccountModel.findAll( { where: { user_id: req.currentUser.id, status: 'active' } } );
+
+        if ( !bankAccounts || bankAccounts.length === 0 ) {
+            new HttpException( res, responseCode.notFound, 'You have not added any bank account.' );
+            return;
+        }
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Bank fetched succesfully.',
+            data: bankAccounts
         } );
 
     };
