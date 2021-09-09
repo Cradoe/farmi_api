@@ -42,3 +42,18 @@ exports.investInCrowdFundSchema = [
         .exists()
         .withMessage( 'Transaction reference is required' )
 ];
+
+exports.withdrawalRequestSchema = [
+    body( 'crowd_fund_id' )
+        .exists()
+        .withMessage( 'Crowd fund ID is required' ),
+    body( 'bank_account_id' )
+        .exists()
+        .withMessage( 'Bank account ID is required' )
+];
+
+exports.confirmWithdrawalSchema = [
+    body( 'txref' )
+        .exists()
+        .withMessage( 'Transaction reference is required' )
+];

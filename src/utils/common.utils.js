@@ -5,7 +5,7 @@ exports.getRandomNumber = getRandomNumber;
 
 exports.generateRandomCode = () => {
     for ( var e = "", t = 0; t < 10; t++ )
-        e += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"[ Math.floor( getRandomNumber( 0, 64 ) ) ];
+        e += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"[ Math.floor( getRandomNumber( 0, 61 ) ) ];
     return e;
 }
 

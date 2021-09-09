@@ -4,7 +4,8 @@ const responseCode = require( '../utils/responseCode.utils.js' );
 const { checkValidation } = require( '../utils/auth.utils.js' );
 const { Op } = require( "sequelize" );
 
-const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel } = require( '../models/index.js' );
+const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel, CrowdFundWithdrawals: CrowdFundWithdrawalModel } = require( '../models/index.js' );
+const { generateRandomCode } = require( '../utils/common.utils.js' );
 
 class CrowdFundController {
 
@@ -153,17 +154,13 @@ class CrowdFundController {
             new HttpException( res, responseCode.internalServerError, 'Something went wrong. Kindly contact our support centre.' );
             return;
         }
-        const allInvestments = await InvestmentModel.findAll( { where: { crowd_fund_id: req.body.crowd_fund_id } } );
-        if ( !allInvestments ) {
+
+        let amountAvailable = await this._calculateCrowdFundInvestments( req.body.crowd_fund_id );
+
+        if ( !amountAvailable ) {
             new HttpException( res, responseCode.internalServerError, 'Something went wrong. Kindly contact our support centre.' );
             return;
         }
-
-        let amountAvailable = 0;
-
-        allInvestments.forEach( investment => {
-            amountAvailable += Number( investment.amount );
-        } );
 
         if ( crowdFund.dataValues.amount_needed <= amountAvailable ) {
             this._updateCrowdFundStatus( req.body.crowd_fund_id );
@@ -214,9 +211,109 @@ class CrowdFundController {
 
     };
 
+    initiateCrowdFundWithdrawal = async ( req, res, next ) => {
+        const isValid = await checkValidation( req, res );
+        if ( !isValid ) return;
+
+        const crowdFund = await CrowdFundModel.findByPk( req.body.crowd_fund_id );
+        if ( !crowdFund ) {
+            new HttpException( res, responseCode.notFound, 'Cannot get details of the crowd funds.' );
+            return;
+        }
+
+        if ( crowdFund.dataValues.status !== 'running' ) {
+            new HttpException( res, responseCode.badRequest, 'This crowdfund is not currently active.' );
+            return;
+        }
+
+        const farm = await FarmModel.findByPk( crowdFund.dataValues.farm_id );
+        if ( !farm ) {
+            new HttpException( res, responseCode.notFound, 'Cannot get details of the farm.' );
+            return;
+        } else if ( farm.dataValues.farmer_id !== req.currentUser.id ) {
+            new HttpException( res, responseCode.unauthorized, 'Access Denied! You don\'t have permission to inititate this withdrawal.' );
+            return;
+        } else if ( farm.dataValues.status !== 'active' ) {
+            new HttpException( res, responseCode.unauthorized, 'You cannot access this fund, Kindly contact our support centre.' );
+            return;
+        }
+
+
+        let withdrawal = await CrowdFundWithdrawalModel.findOne( { where: { crowd_fund_id: req.body.crowd_fund_id } } );
+
+        if ( withdrawal && withdrawal.dataValues.status === 'success' ) {
+            new HttpException( res, responseCode.badRequest, 'You have withdrawn this funds.' );
+            return;
+        } else if ( !withdrawal ) {
+
+            const amountWithdrawable = await this._calculateCrowdFundInvestments( req.body.crowd_fund_id );
+
+            if ( !amountWithdrawable ) {
+                new HttpException( res, responseCode.badRequest, 'There is no fund to withdraw.' );
+                return;
+            }
+
+            const data = {
+                crowd_fund_id: req.body.crowd_fund_id,
+                user_id: req.currentUser.id,
+                txref: generateRandomCode() + ( req.currentUser.id ).toString(),
+                bank_account_id: req.body.bank_account_id,
+                amount: amountWithdrawable
+            }
+            withdrawal = await CrowdFundWithdrawalModel.create( data );
+        }
+
+        if ( !withdrawal ) {
+            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Kindly contact our support centre.' );
+            return;
+        }
+
+
+        res.status( responseCode.created ).json( {
+            status: responseCode.created,
+            message: 'Your withdrawal request is ready.',
+            data: withdrawal.dataValues
+        } );
+
+    };
+
+    confirmWithdrawal = async ( req, res, next ) => {
+        const withdrawal = await CrowdFundWithdrawalModel.findOne( { where: { txref: req.body.txref } } );
+        if ( !withdrawal ) {
+            new HttpException( res, responseCode.badRequest, 'Invalid transaction reference.' );
+            return;
+        }
+
+        const withdrawalUpdate = await CrowdFundWithdrawalModel.update( { status: 'success' }, { where: { txref: req.body.txref } } );
+        if ( !withdrawal ) {
+            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Kindly contact our support centre.' );
+            return;
+        }
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Your withdrawal request is ready.',
+            data: { ...withdrawal.dataValues, status: 'success' }
+        } );
+    }
+
+
     _updateCrowdFundStatus = async ( crowd_fund_id ) => {
         const update = await CrowdFundModel.update( { status: 'running' }, { where: { id: crowd_fund_id } } );
         return;
+    }
+    _calculateCrowdFundInvestments = async ( crowd_fund_id ) => {
+        const allInvestments = await InvestmentModel.findAll( { where: { crowd_fund_id } } );
+        if ( !allInvestments ) {
+            return false;
+        }
+
+        let amountAvailable = 0;
+
+        allInvestments.forEach( investment => {
+            amountAvailable += Number( investment.amount );
+        } );
+
+        return amountAvailable;
     }
 }
 
