@@ -285,7 +285,7 @@ class CrowdFundController {
         }
 
         const withdrawalUpdate = await CrowdFundWithdrawalModel.update( { status: 'success' }, { where: { txref: req.body.txref } } );
-        if ( !withdrawal ) {
+        if ( !withdrawalUpdate ) {
             new HttpException( res, responseCode.internalServerError, 'Something went wrong. Kindly contact our support centre.' );
             return;
         }
@@ -296,11 +296,30 @@ class CrowdFundController {
         } );
     }
 
+    getFarmCrowdFundWithDrawals = async ( req, res, next ) => {
+        const crowdFunds = await CrowdFundWithdrawalModel.findAll( {
+            where: { status: 'success' },
+            include: [ { model: CrowdFundModel, as: 'crowdFund', where: { farm_id: req.params.farm_id } } ]
+        } );
+
+        if ( !crowdFunds ) {
+            new HttpException( res, responseCode.notFound, 'No crowdfund withdrawal yet.' );
+            return;
+        }
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Withdrawals retrieved successfully.',
+            data: crowdFunds
+        } );
+    }
+
 
     _updateCrowdFundStatus = async ( crowd_fund_id ) => {
         const update = await CrowdFundModel.update( { status: 'running' }, { where: { id: crowd_fund_id } } );
         return;
     }
+
     _calculateCrowdFundInvestments = async ( crowd_fund_id ) => {
         const allInvestments = await InvestmentModel.findAll( { where: { crowd_fund_id } } );
         if ( !allInvestments ) {

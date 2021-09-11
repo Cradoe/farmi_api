@@ -35,7 +35,7 @@ exports.investInCrowdFundSchema = [
         .withMessage( 'Crowd fund ID is required' ),
     body( 'amount' )
         .exists()
-        .withMessage( 'You need to specify the amount needed.' )
+        .withMessage( 'You need to specify the amount to invest.' )
         .isLength( { min: 2 } )
         .withMessage( 'Must be at least 2 chars long' ),
     body( 'txref' )
@@ -51,6 +51,21 @@ exports.withdrawalRequestSchema = [
         .exists()
         .withMessage( 'Bank account ID is required' )
 ];
+
+exports.crowdFundRefundSchema = [
+    body( 'crowd_fund_id' )
+        .exists()
+        .withMessage( 'Crowd fund ID is required' ),
+    body( 'amount' )
+        .exists()
+        .withMessage( 'You need to specify the amount to pay.' )
+        .isLength( { min: 2 } )
+        .withMessage( 'Must be at least 2 chars long' ),
+    body( 'txref' )
+        .exists()
+        .withMessage( 'Transaction reference is required' )
+];
+
 
 exports.confirmWithdrawalSchema = [
     body( 'txref' )

@@ -14,12 +14,13 @@ router.post( '/apply', auth(), applyForCrowdFundSchema, awaitHandlerFactory( cro
 
 router.delete( '/delete/:id', auth(), awaitHandlerFactory( crowdFundController.deletePendingCrowdFund ) );
 
-
 router.post( '/invest', auth(), investInCrowdFundSchema, awaitHandlerFactory( crowdFundController.investInCrowdFund ) );
 router.get( '/investments/:crowd_fund_id', auth(), awaitHandlerFactory( crowdFundController.getCrowdFundInvestments ) );
-
 
 router.post( '/withdrawal/request', auth(), withdrawalRequestSchema, awaitHandlerFactory( crowdFundController.initiateCrowdFundWithdrawal ) );
 router.post( '/withdrawal/confirm', auth(), confirmWithdrawalSchema, awaitHandlerFactory( crowdFundController.confirmWithdrawal ) );
 
+router.get( '/withdrawals/:farm_id', auth(), awaitHandlerFactory( crowdFundController.getFarmCrowdFundWithDrawals ) );
+
+router.post( '/withdrawal/refund', auth(), crowdFundRefundSchema, awaitHandlerFactory( crowdFundController.initiateCrowdFundWithdrawal ) );
 module.exports = router;

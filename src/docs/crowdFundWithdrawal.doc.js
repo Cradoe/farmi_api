@@ -73,6 +73,32 @@ exports.crowdFundWithdrawalPaths = {
                 }
             }
         }
+    },
+    "/crowd_fund/withdrawals/{farm_id}": {
+        "get": {
+            "tags": [ "CrowdFund Withdrawal" ],
+            "summary": "Endpoint to get all farm crowdfund withdrawals.",
+            "description": "Returns array of json objects",
+            "parameters": [
+                {
+                    "name": "farm_id",
+                    "in": "path",
+                    "description": "ID of farm",
+                    "required": true
+                }
+            ],
+            "responses": {
+                "201": {
+                    "description": "Created"
+                },
+                "400": {
+                    "description": "Bad Request"
+                },
+                "500": {
+                    "description": "Internal server error."
+                }
+            }
+        }
 
     },
 }
