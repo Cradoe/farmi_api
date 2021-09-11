@@ -2,7 +2,7 @@ const express = require( "express" );
 const accountController = require( '../controllers/account.controller.js' );
 const { auth } = require( "../middleware/auth.middleware.js" );
 const { awaitHandlerFactory } = require( '../middleware/awaitHandlerFactory.middleware.js' );
-const { farmerAccountType, farmModeratorAccountType } = require( "../middleware/requestAccountType.middleware.js" );
+const { farmerAccountType, farmModeratorAccountType, investorAccountType } = require( "../middleware/requestAccountType.middleware.js" );
 const { addBankAccountSchema } = require( "../middleware/validators/bankAccount.middleware.js" );
 const { createAccountSchema, validateLogin, activateAccountSchema, createFarmModeratorSchema } = require( '../middleware/validators/userValidator.middleware.js' );
 
@@ -19,7 +19,7 @@ router.post( '/farm_moderator/register', auth(), createFarmModeratorSchema, farm
 router.post( '/farm_moderator/login', validateLogin, awaitHandlerFactory( accountController.farmModeratorLogin ) );
 
 router.post( '/investor/login', validateLogin, awaitHandlerFactory( accountController.investorLogin ) );
-router.post( '/investor/register', createAccountSchema, farmerAccountType, awaitHandlerFactory( accountController.createInvestorAccount ) );
+router.post( '/investor/register', createAccountSchema, investorAccountType, awaitHandlerFactory( accountController.createInvestorAccount ) );
 
 
 router.post( '/bank', auth(), addBankAccountSchema, awaitHandlerFactory( accountController.addBankAccount ) );

@@ -2,19 +2,22 @@
 
 module.exports = {
   up: async ( queryInterface, Sequelize ) => {
-    await queryInterface.createTable( 'Users', {
+    await queryInterface.createTable( 'farm_categories', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-
-      createdAt: {
+      category: {
+        type: Sequelize.STRING( 50 ),
+        allowNull: false
+      },
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }
@@ -22,6 +25,6 @@ module.exports = {
   },
 
   down: async ( queryInterface, Sequelize ) => {
-    await queryInterface.dropTable( 'Users' );
+    await queryInterface.dropTable( 'farm_categories' );
   }
 };

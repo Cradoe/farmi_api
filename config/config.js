@@ -7,6 +7,7 @@ module.exports = {
     "database": process.env.DB_DATABASE,
     "host": process.env.HOST,
     "dialect": "mysql",
+    "logging": false,
     "pool": {
 
       max: 5,
@@ -25,15 +26,12 @@ module.exports = {
     "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "mysql",
+    "logging": false,
     "pool": {
-
-      max: 5,
-
-      min: 0,
-
-      acquire: 30000,
-
-      idle: 10000
+      "max": 5,
+      "min": 0,
+      "acquire": 30000,
+      "idle": 10000
 
     }
   }
@@ -45,14 +43,10 @@ module.exports = {
     "host": process.env.DB_HOST,
     "dialect": "mysql",
     "pool": {
-
-      max: 5,
-
-      min: 0,
-
-      acquire: 30000,
-
-      idle: 10000
+      "max": 5,
+      "min": 0,
+      "acquire": 30000,
+      "idle": 10000
 
     }
   }
