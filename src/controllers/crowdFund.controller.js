@@ -4,7 +4,7 @@ const responseCode = require( '../utils/responseCode.utils.js' );
 const { checkValidation } = require( '../utils/auth.utils.js' );
 const { Op } = require( "sequelize" );
 
-const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel, CrowdFundWithdrawals: CrowdFundWithdrawalModel } = require( '../models/index.js' );
+const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel, CrowdFundWithdrawals: CrowdFundWithdrawalModel, CrowdFundPaybackRemitance: CrowdFundPaybackRemitanceModel } = require( '../models/index.js' );
 const { generateRandomCode } = require( '../utils/common.utils.js' );
 
 class CrowdFundController {
@@ -246,19 +246,35 @@ class CrowdFundController {
             return;
         } else if ( !withdrawal ) {
 
-            const amountWithdrawable = await this._calculateCrowdFundInvestments( req.body.crowd_fund_id );
+            let amountWithdrawable = await this._calculateCrowdFundInvestments( req.body.crowd_fund_id );
+
 
             if ( !amountWithdrawable ) {
                 new HttpException( res, responseCode.badRequest, 'There is no fund to withdraw.' );
                 return;
             }
 
+            const roi = ( Number( crowdFund.dataValues.roi ) / 100 ) * amountWithdrawable;
+            let companyPercentage = 0;
+
+            const systemPolicy = await SystemPolicyModel.findOne( { where: { status: 'active' } } );
+            if ( !systemPolicy ) {
+                companyPercentage = 1;
+            }
+
+            companyPercentage = ( Number( systemPolicy.dataValues.crowd_fund_percentage ) / 100 ) * amountWithdrawable;
+
+
+            const amountToBePaid = amountWithdrawable + roi + companyPercentage;
+
+
+
             const data = {
                 crowd_fund_id: req.body.crowd_fund_id,
                 user_id: req.currentUser.id,
                 txref: generateRandomCode() + ( req.currentUser.id ).toString(),
                 bank_account_id: req.body.bank_account_id,
-                amount: amountWithdrawable
+                amount: amountToBePaid
             }
             withdrawal = await CrowdFundWithdrawalModel.create( data );
         }
@@ -312,6 +328,61 @@ class CrowdFundController {
             message: 'Withdrawals retrieved successfully.',
             data: crowdFunds
         } );
+    }
+
+
+    payUpCrowdFundWithdrawal = async ( req, res, next ) => {
+        const isValid = await checkValidation( req, res );
+        if ( !isValid ) return;
+
+        const crowdFund = await CrowdFundModel.findByPk( req.body.crowd_fund_id );
+        if ( !crowdFund ) {
+            new HttpException( res, responseCode.notFound, 'Cannot get details of the crowd funds.' );
+            return;
+        }
+
+        const crowdFundWithdrawals = await CrowdFundWithdrawalModel.findOne( { where: { crowd_fund_id: req.body.crowd_fund_id, status: 'success' } } );
+        if ( !crowdFundWithdrawals ) {
+            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Can\'t find this withdrawal details.' );
+            return;
+        }
+
+
+
+        const amountWithdrawn = Number( crowdFundWithdrawals.dataValues.amount );
+
+
+        const roi = ( Number( crowdFund.dataValues.roi ) / 100 ) * amountWithdrawn;
+        let companyPercentage = 0;
+        const systemPolicy = await SystemPolicyModel.findOne( { where: { status: 'active' } } );
+        if ( !systemPolicy ) {
+            companyPercentage = 1;
+        }
+
+        companyPercentage = ( Number( systemPolicy.dataValues.crowd_fund_percentage ) / 100 ) * amountWithdrawn;
+
+
+        const amountToBePaid = amountWithdrawn + roi + companyPercentage;
+
+        if ( amountToBePaid !== Number( req.body.amount ) ) {
+            new HttpException( res, responseCode.badRequest, 'You are expected to pay up ' + amountToBePaid );
+            return;
+        }
+
+        const remitance = await CrowdFundPaybackRemitanceModel.create( req.body );
+
+        if ( !remitance ) {
+            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Can\'t save remitance details.' );
+            return;
+        }
+
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Withdrawals retrieved successfully.',
+            data: remitance.dataValues
+        } );
+
     }
 
 

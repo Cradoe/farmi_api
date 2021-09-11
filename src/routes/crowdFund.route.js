@@ -1,7 +1,7 @@
 const express = require( "express" );
 const { awaitHandlerFactory } = require( '../middleware/awaitHandlerFactory.middleware.js' );
 const { auth } = require( '../middleware/auth.middleware.js' );
-const { applyForCrowdFundSchema, investInCrowdFundSchema, withdrawalRequestSchema, confirmWithdrawalSchema } = require( "../middleware/validators/crowdFund.middleware.js" );
+const { applyForCrowdFundSchema, investInCrowdFundSchema, withdrawalRequestSchema, confirmWithdrawalSchema, crowdFundRemitanceSchema } = require( "../middleware/validators/crowdFund.middleware.js" );
 const crowdFundController = require( "../controllers/crowdFund.controller.js" );
 
 const router = express.Router();
@@ -22,5 +22,5 @@ router.post( '/withdrawal/confirm', auth(), confirmWithdrawalSchema, awaitHandle
 
 router.get( '/withdrawals/:farm_id', auth(), awaitHandlerFactory( crowdFundController.getFarmCrowdFundWithDrawals ) );
 
-router.post( '/withdrawal/refund', auth(), crowdFundRefundSchema, awaitHandlerFactory( crowdFundController.initiateCrowdFundWithdrawal ) );
+router.post( '/withdrawal/refund', auth(), crowdFundRemitanceSchema, awaitHandlerFactory( crowdFundController.payUpCrowdFundWithdrawal ) );
 module.exports = router;

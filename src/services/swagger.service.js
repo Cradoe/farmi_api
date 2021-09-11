@@ -2,6 +2,7 @@ const dotenv = require( "dotenv" );
 const { accountPaths, accountTag } = require( "../docs/account.doc.js" );
 const { bankAccountPaths, bankAccountTag } = require( "../docs/bankAccount.doc.js" );
 const { crowdFundTag, crowdFundPaths } = require( "../docs/crowdFund.doc.js" );
+const { crowdFundRemitanceTag, crowdFundRemitancePaths } = require( "../docs/crowdFundRemitance.doc.js" );
 const { crowdFundWithdrawalTag, crowdFundWithdrawalPaths } = require( "../docs/crowdFundWithdrawal.doc.js" );
 const { farmPaths, farmTag } = require( "../docs/farm.doc.js" );
 const { farmerPaths, farmerTag } = require( "../docs/farmer.doc.js" );
@@ -51,7 +52,8 @@ const swaggerConfig = {
         bankAccountTag,
         crowdFundTag,
         investmentTag,
-        crowdFundWithdrawalTag
+        crowdFundWithdrawalTag,
+        crowdFundRemitanceTag
     ],
     "paths": {
         ...accountPaths,
@@ -60,7 +62,8 @@ const swaggerConfig = {
         ...bankAccountPaths,
         ...crowdFundPaths,
         ...investmentPaths,
-        ...crowdFundWithdrawalPaths
+        ...crowdFundWithdrawalPaths,
+        ...crowdFundRemitancePaths
     },
 }
 

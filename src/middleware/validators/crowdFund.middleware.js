@@ -52,7 +52,7 @@ exports.withdrawalRequestSchema = [
         .withMessage( 'Bank account ID is required' )
 ];
 
-exports.crowdFundRefundSchema = [
+exports.crowdFundRemitanceSchema = [
     body( 'crowd_fund_id' )
         .exists()
         .withMessage( 'Crowd fund ID is required' ),
