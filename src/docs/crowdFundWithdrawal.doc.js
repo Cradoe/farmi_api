@@ -62,8 +62,8 @@ exports.crowdFundWithdrawalPaths = {
                 }
             },
             "responses": {
-                "201": {
-                    "description": "Created"
+                "200": {
+                    "description": "Ok"
                 },
                 "400": {
                     "description": "Bad Request"

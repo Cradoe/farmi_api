@@ -3,7 +3,7 @@ const {
     Model
 } = require( 'sequelize' );
 module.exports = ( sequelize, DataTypes ) => {
-    class CrowdFundModel extends Model {
+    class InvestmentWithdrawalModel extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -11,44 +11,42 @@ module.exports = ( sequelize, DataTypes ) => {
          */
         static associate ( models ) {
             // define association here
-            this.belongsTo( models.Farms, {
-                as: 'farm',
-                foreignKey: 'farm_id',
+            this.belongsTo( models.Investments, {
+                as: 'investment',
+                foreignKey: 'investment_id',
+                constraints: false
+            } );
+            this.belongsTo( models.Users, {
+                as: 'account',
+                foreignKey: 'user_id',
+                constraints: false
+            } );
+            this.belongsTo( models.BankAccounts, {
+                as: 'bank',
+                foreignKey: 'bank_account_id',
                 constraints: false
             } );
         }
     };
-    CrowdFundModel.init( {
-        amount_needed: {
+    InvestmentWithdrawalModel.init( {
+        amount: {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-        investment_deadline: {
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        maturity_date: {
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        roi: {
+        txref: {
             type: DataTypes.STRING( 20 ),
-            allowNull: false
-        },
-        description: {
-            type: DataTypes.TEXT,
             allowNull: false
         },
         status: {
             type: DataTypes.ENUM,
-            values: [ 'pending', 'active', 'matured', 'running', 'blocked', 'deleted' ],
+            values: [ 'pending', 'success', 'paid', 'failed' ],
             defaultValue: 'pending'
         }
     }, {
         sequelize,
-        modelName: 'CrowdFunds',
+        modelName: 'InvestmentWithdrawals',
         underscored: true
     } );
 
-    return CrowdFundModel;
+    return InvestmentWithdrawalModel;
 };

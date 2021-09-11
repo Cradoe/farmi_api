@@ -5,6 +5,7 @@ const { crowdFundTag, crowdFundPaths } = require( "../docs/crowdFund.doc.js" );
 const { crowdFundRemitanceTag, crowdFundRemitancePaths } = require( "../docs/crowdFundRemitance.doc.js" );
 const { crowdFundWithdrawalTag, crowdFundWithdrawalPaths } = require( "../docs/crowdFundWithdrawal.doc.js" );
 const { farmPaths, farmTag } = require( "../docs/farm.doc.js" );
+const { farmCategoryTag, farmCategoryPaths } = require( "../docs/farmCategories.doc.js" );
 const { farmerPaths, farmerTag } = require( "../docs/farmer.doc.js" );
 const { investmentTag, investmentPaths } = require( "../docs/investment.doc.js" );
 const { investorTag, investorPaths } = require( "../docs/investor.doc.js" );
@@ -48,6 +49,7 @@ const swaggerConfig = {
     },
     "tags": [
         accountTag,
+        farmCategoryTag,
         farmTag,
         farmerTag,
         bankAccountTag,
@@ -59,6 +61,7 @@ const swaggerConfig = {
     ],
     "paths": {
         ...accountPaths,
+        ...farmCategoryPaths,
         ...farmPaths,
         ...farmerPaths,
         ...bankAccountPaths,

@@ -210,7 +210,7 @@ class CrowdFundController {
             }
         } );
 
-    };
+    }
 
     initiateCrowdFundWithdrawal = async ( req, res, next ) => {
         const isValid = await checkValidation( req, res );
@@ -292,7 +292,7 @@ class CrowdFundController {
             data: withdrawal.dataValues
         } );
 
-    };
+    }
 
     confirmWithdrawal = async ( req, res, next ) => {
         const withdrawal = await CrowdFundWithdrawalModel.findOne( { where: { txref: req.body.txref } } );
@@ -387,7 +387,7 @@ class CrowdFundController {
         let update = await CrowdFundWithdrawalModel.update( { status: 'paid' }, { where: { crowd_fund_id: req.body.crowd_fund_id } } );
 
         // update crowd funds status
-        scheduleJob( CrowdFundModel.update( { status: 'inactive' }, { where: { id: req.body.crowd_fund_id } } ) );
+        scheduleJob( CrowdFundModel.update( { status: 'matured' }, { where: { id: req.body.crowd_fund_id } } ) );
 
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,

@@ -16,17 +16,15 @@ module.exports = ( sequelize, DataTypes ) => {
                 foreignKey: 'farmer_id',
                 constraints: false
             } );
+
+            this.belongsTo( models.FarmCategories, {
+                as: 'category',
+                foreignKey: 'farm_category_id',
+                constraints: false
+            } );
         }
     };
     FarmModel.init( {
-        farmer_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        farm_category_id: {
-            type: DataTypes.INTEGER( 3 ),
-            allowNull: false
-        },
         farm_name: {
             type: DataTypes.STRING( 99 ),
             allowNull: false
