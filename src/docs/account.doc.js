@@ -106,6 +106,57 @@ exports.accountPaths = {
             }
         }
     },
+
+
+
+
+    "/account/investor/login": { ...loginSchema },
+    "/account/investor/register": {
+        "post": {
+            "tags": [ "Account" ],
+            "summary": "Investor registration Endpoint.",
+            "description": "Returns json object of user data",
+            "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "firstname": {
+                                    "type": "string"
+                                },
+                                "lastname": {
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "gender": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                },
+                                "confirm_password": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                ...userAccountRegistrationResponses
+            }
+        }
+    },
+
+
+
     "/account/farm_moderator/login": { ...loginSchema },
     "/account/farm_moderator/register": {
         "post": {

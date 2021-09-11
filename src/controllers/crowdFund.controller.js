@@ -4,8 +4,9 @@ const responseCode = require( '../utils/responseCode.utils.js' );
 const { checkValidation } = require( '../utils/auth.utils.js' );
 const { Op } = require( "sequelize" );
 
-const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel, CrowdFundWithdrawals: CrowdFundWithdrawalModel, CrowdFundPaybackRemitance: CrowdFundPaybackRemitanceModel } = require( '../models/index.js' );
+const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel, CrowdFundWithdrawals: CrowdFundWithdrawalModel, CrowdFundPaybackRemitance: CrowdFundPaybackRemitanceModel, SystemPolicies: SystemPolicyModel, CompanyProfit: CompanyProfitModel } = require( '../models/index.js' );
 const { generateRandomCode } = require( '../utils/common.utils.js' );
+const scheduleJob = require( '../services/scheduleJob.service.js' );
 
 class CrowdFundController {
 
@@ -200,7 +201,7 @@ class CrowdFundController {
 
         res.status( responseCode.created ).json( {
             status: responseCode.created,
-            message: 'Crowdfund investments fetched successfully. fetched successfully.',
+            message: 'Crowdfund investments fetched successfully.',
             data: {
                 amountNeeded: crowdFund.dataValues.amount_needed,
                 amountAvailable,
@@ -347,10 +348,7 @@ class CrowdFundController {
             return;
         }
 
-
-
         const amountWithdrawn = Number( crowdFundWithdrawals.dataValues.amount );
-
 
         const roi = ( Number( crowdFund.dataValues.roi ) / 100 ) * amountWithdrawn;
         let companyPercentage = 0;
@@ -369,6 +367,7 @@ class CrowdFundController {
             return;
         }
 
+
         const remitance = await CrowdFundPaybackRemitanceModel.create( req.body );
 
         if ( !remitance ) {
@@ -376,15 +375,26 @@ class CrowdFundController {
             return;
         }
 
+        const companyProfit = {
+            system_policy_id: systemPolicy.dataValues.id,
+            amount: companyPercentage,
+            crowd_fund_payback_remitance_id: remitance.dataValues.id
+        }
+
+        const addCompanyProfit = await CompanyProfitModel.create( companyProfit );
+
+        //update crowdfund withdrawal status
+        let update = await CrowdFundWithdrawalModel.update( { status: 'paid' }, { where: { crowd_fund_id: req.body.crowd_fund_id } } );
+
+        // update crowd funds status
+        scheduleJob( CrowdFundModel.update( { status: 'inactive' }, { where: { id: req.body.crowd_fund_id } } ) );
 
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
-            message: 'Withdrawals retrieved successfully.',
+            message: 'Remitance successful.',
             data: remitance.dataValues
         } );
-
     }
-
 
     _updateCrowdFundStatus = async ( crowd_fund_id ) => {
         const update = await CrowdFundModel.update( { status: 'running' }, { where: { id: crowd_fund_id } } );

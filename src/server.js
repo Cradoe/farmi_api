@@ -13,6 +13,7 @@ const accountRouter = require( './routes/account.route.js' );
 const farmRouter = require( './routes/farm.route.js' );
 const farmerRouter = require( './routes/farmer.route.js' );
 const crowdFundRouter = require( './routes/crowdFund.route.js' );
+const investorRouter = require( './routes/investor.route.js' );
 
 const dbConfiguration = require( './models/index.js' );
 
@@ -49,6 +50,7 @@ app.use( `/account`, accountRouter );
 app.use( `/farm`, farmRouter );
 app.use( `/farmer`, farmerRouter );
 app.use( `/crowd_fund`, crowdFundRouter );
+app.use( `/investor`, investorRouter );
 
 
 // 404 error

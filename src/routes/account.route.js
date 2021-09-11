@@ -18,6 +18,9 @@ router.post( '/farmer/register', createAccountSchema, farmerAccountType, awaitHa
 router.post( '/farm_moderator/register', auth(), createFarmModeratorSchema, farmModeratorAccountType, awaitHandlerFactory( accountController.createFarmModeratorAccount ) );
 router.post( '/farm_moderator/login', validateLogin, awaitHandlerFactory( accountController.farmModeratorLogin ) );
 
+router.post( '/investor/login', validateLogin, awaitHandlerFactory( accountController.investorLogin ) );
+router.post( '/investor/register', createAccountSchema, farmerAccountType, awaitHandlerFactory( accountController.createInvestorAccount ) );
+
 
 router.post( '/bank', auth(), addBankAccountSchema, awaitHandlerFactory( accountController.addBankAccount ) );
 router.get( '/bank/list', auth(), awaitHandlerFactory( accountController.getUserBankAccounts ) );

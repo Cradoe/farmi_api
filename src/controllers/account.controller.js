@@ -5,7 +5,7 @@ const sendEmail = require( '../services/sendEmail.service.js' );
 const { generateRandomCode } = require( '../utils/common.utils.js' );
 const { generateToken, checkValidation } = require( '../utils/auth.utils.js' );
 
-const { Users: UserModel, Farmers: FarmerModel, Farms: FarmModel, FarmModerators: FarmModeratorModel, BankAccounts: BankAccountModel } = require( '../models/index.js' );
+const { Users: UserModel, Farmers: FarmerModel, Farmers: InvestorModel, Farms: FarmModel, FarmModerators: FarmModeratorModel, BankAccounts: BankAccountModel } = require( '../models/index.js' );
 
 
 class AccountController {
@@ -68,6 +68,8 @@ class AccountController {
 
 
     };
+
+
     farmerLogin = async ( req, res, next ) => {
         const isValid = await checkValidation( req, res );
         if ( !isValid ) return;
@@ -170,7 +172,73 @@ class AccountController {
     };
 
 
+    createInvestorAccount = async ( req, res, next ) => {
+        const isValid = await checkValidation( req, res );
+        if ( !isValid ) return;
 
+        const userAccount = await this.createUserAccount( req, res );
+        if ( !userAccount ) return;
+        const investorAccount = await InvestorModel.create( { user_id: userAccount.id } );
+        const { password, ...dataWithoutPassword } = userAccount;
+
+        if ( investorAccount ) {
+            const emailCallback = ( err ) => {
+                try {
+                    if ( err ) {
+                        res.status( responseCode.internalServerError ).json( {
+                            status: responseCode.internalServerError,
+                            message: 'Account created but unable to send activation email. Please contact our support center.'
+                        } );
+                    } else {
+                        res.status( responseCode.created ).json( {
+                            status: responseCode.created,
+                            message: 'Account created successfully! Verification code has been sent to your email.',
+                            data: dataWithoutPassword
+                        } );
+                    }
+                } catch ( error ) {
+                    console.log( error );
+                }
+            }
+
+            await this.sendActivationCode( userAccount, emailCallback );
+        } else {
+            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Please contact our support center.' );
+            return;
+        }
+    };
+
+
+    investorLogin = async ( req, res, next ) => {
+        const isValid = await checkValidation( req, res );
+        if ( !isValid ) return;
+
+        await this.accountLogin( req, res, async ( accountDetails, token ) => {
+
+            await InvestorModel.findOne( { where: { user_id: accountDetails.id } } ).then( async data => {
+                if ( !data ) {
+                    new HttpException( res, responseCode.unauthorized, 'Unauthorized access denied! You are not registered as an investor.' );
+                } else {
+                    const { company_name, company_address } = data.dataValues;
+                    accountDetails.company_name = company_name;
+                    accountDetails.company_address = company_address;
+
+                    res.status( responseCode.oK ).json( {
+                        status: responseCode.oK,
+                        message: 'Login successful.',
+                        token,
+                        data: accountDetails
+                    } );
+
+
+                }
+            } ).catch( error => {
+                new HttpException( res, responseCode.internalServerError, 'Something went wrong', error )
+            } );
+
+
+        } );
+    };
 
 
     sendActivationCode = async ( { email: to, activation_code }, callback ) => {

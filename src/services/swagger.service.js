@@ -7,6 +7,7 @@ const { crowdFundWithdrawalTag, crowdFundWithdrawalPaths } = require( "../docs/c
 const { farmPaths, farmTag } = require( "../docs/farm.doc.js" );
 const { farmerPaths, farmerTag } = require( "../docs/farmer.doc.js" );
 const { investmentTag, investmentPaths } = require( "../docs/investment.doc.js" );
+const { investorTag, investorPaths } = require( "../docs/investor.doc.js" );
 
 dotenv.config();
 
@@ -53,7 +54,8 @@ const swaggerConfig = {
         crowdFundTag,
         investmentTag,
         crowdFundWithdrawalTag,
-        crowdFundRemitanceTag
+        crowdFundRemitanceTag,
+        investorTag
     ],
     "paths": {
         ...accountPaths,
@@ -63,7 +65,8 @@ const swaggerConfig = {
         ...crowdFundPaths,
         ...investmentPaths,
         ...crowdFundWithdrawalPaths,
-        ...crowdFundRemitancePaths
+        ...crowdFundRemitancePaths,
+        ...investorPaths
     },
 }
 
