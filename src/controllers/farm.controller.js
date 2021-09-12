@@ -3,7 +3,7 @@ const HttpException = require( '../utils/HttpException.utils.js' );
 const responseCode = require( '../utils/responseCode.utils.js' );
 const { checkValidation } = require( '../utils/auth.utils.js' );
 
-const { Farms: FarmModel, FarmModerators: FarmModeratorModel } = require( '../models/index.js' );
+const { Farms: FarmModel, FarmModerators: FarmModeratorModel, FarmGallery: FarmGalleryModel } = require( '../models/index.js' );
 const { formatStaticFilePath } = require( '../utils/common.utils.js' );
 
 class FarmController {
@@ -110,6 +110,66 @@ class FarmController {
             message: 'Moderator Account deleted successfully.'
         } );
 
+    };
+
+    addGallery = async ( req, res, next ) => {
+        const isValid = await checkValidation( req, res );
+        if ( !isValid ) return;
+
+        const farm = await FarmModel.findByPk( req.body.farm_id );
+
+        if ( !farm ) {
+            new HttpException( res, responseCode.badRequest, 'This farm is not registered.' );
+            return;
+        }
+
+        if ( req.files && Array.isArray( req.files ) ) {
+
+            Promise.all(
+                req.files.map( ( file ) => {
+                    return new Promise( async ( resolve ) => {
+                        const newFile = await FarmGalleryModel.create( { farm_id: req.body.farm_id, image: formatStaticFilePath( req, file.filename ) } );
+
+                        if ( newFile ) {
+                            resolve( {
+                                filename: file.filename,
+                                url: newFile.dataValues.image
+                            } );
+                        } else {
+                            new HttpException( res, responseCode.internalServerError, 'Something went wrong. Unable to upload the file.' );
+                            return;
+                        }
+                    } );
+                } )
+            ).then( ( uploadedFiles ) => {
+
+                res.status( responseCode.created ).json( {
+                    status: responseCode.created,
+                    message: 'Files uploaded successfuly.',
+                    data: uploadedFiles
+                } );
+            } ).catch( error => {
+                new HttpException( res, responseCode.internalServerError, 'Something went wrong. Unable to upload the file.' );
+                return;
+            } );
+        }
+    };
+
+    galleryFiles = async ( req, res, next ) => {
+
+
+        const gallery = await FarmGalleryModel.findAll( { where: { farm_id: req.params.farm_id } } );
+
+        if ( !gallery ) {
+            new HttpException( res, responseCode.badRequest, 'You have not added any gallery.' );
+            return;
+        }
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Gallery fetched successfuly.',
+            data: gallery
+        } );
     };
 }
 

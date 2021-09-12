@@ -61,3 +61,10 @@ exports.updateFarmSchema = [
         .withMessage( 'The size of the farm land is required.' )
 
 ];
+
+exports.addGallerySchema = [
+    body( 'farm_id' )
+        .exists()
+        .withMessage( 'Farm ID is required.' )
+];
+
