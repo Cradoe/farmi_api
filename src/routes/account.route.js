@@ -16,7 +16,7 @@ router.post( '/farmer/login', validateLogin, awaitHandlerFactory( accountControl
 
 router.post( '/farmer/register', uploadFile.single( 'profile_picture' ), createAccountSchema, farmerAccountType, awaitHandlerFactory( accountController.createFarmerAccount ) );
 
-router.post( '/farm_moderator/register', auth(), createFarmModeratorSchema, farmModeratorAccountType, awaitHandlerFactory( accountController.createFarmModeratorAccount ) );
+router.post( '/farm_moderator/register', auth(), uploadFile.single( 'profile_picture' ), createFarmModeratorSchema, farmModeratorAccountType, awaitHandlerFactory( accountController.createFarmModeratorAccount ) );
 router.post( '/farm_moderator/login', validateLogin, awaitHandlerFactory( accountController.farmModeratorLogin ) );
 
 router.post( '/investor/login', validateLogin, awaitHandlerFactory( accountController.investorLogin ) );
