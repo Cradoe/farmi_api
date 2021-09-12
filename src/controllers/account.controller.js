@@ -9,7 +9,6 @@ const { Users: UserModel, Farmers: FarmerModel, Farmers: InvestorModel, Farms: F
 
 
 class AccountController {
-
     createUserAccount = async ( req, res ) => {
         await this.hashPassword( req );
         const user = await UserModel.findOne( { where: { email: req.body.email } } );
