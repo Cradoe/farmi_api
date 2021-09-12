@@ -15,8 +15,11 @@ const farmerRouter = require( './routes/farmer.route.js' );
 const crowdFundRouter = require( './routes/crowdFund.route.js' );
 const investorRouter = require( './routes/investor.route.js' );
 const farmCategoryRouter = require( './routes/farmCategory.route.js' );
+const staticFileRouter = require( './routes/staticFile.route.js' );
 
 const dbConfiguration = require( './models/index.js' );
+
+global.__basedir = __dirname;
 
 const { json, urlencoded } = bodyParserPkg;
 
@@ -53,6 +56,7 @@ app.use( `/farmer`, farmerRouter );
 app.use( `/crowd_fund`, crowdFundRouter );
 app.use( `/investor`, investorRouter );
 app.use( `/farm_category`, farmCategoryRouter );
+app.use( `/files`, staticFileRouter );
 
 
 // 404 error

@@ -4,6 +4,7 @@ const responseCode = require( '../utils/responseCode.utils.js' );
 const { checkValidation } = require( '../utils/auth.utils.js' );
 
 const { Farms: FarmModel, FarmModerators: FarmModeratorModel } = require( '../models/index.js' );
+const { formatStaticFilePath } = require( '../utils/common.utils.js' );
 
 class FarmController {
 
@@ -19,7 +20,7 @@ class FarmController {
             return;
         }
 
-        const newFarm = await FarmModel.create( req.body );
+        const newFarm = await FarmModel.create( { ...req.body, logo: formatStaticFilePath( req, req.file ? req.file.filename : 'default-logo.jpg' ) } );
         if ( !newFarm ) {
             new HttpException( res, responseCode.internalServerError, 'Something went wrong' );
             return;

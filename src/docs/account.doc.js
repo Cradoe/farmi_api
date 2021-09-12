@@ -90,6 +90,10 @@ exports.accountPaths = {
                                 "gender": {
                                     "type": "string"
                                 },
+
+                                "profile_picture": {
+                                    "type": "string"
+                                },
                                 "password": {
                                     "type": "string"
                                 },
@@ -106,8 +110,6 @@ exports.accountPaths = {
             }
         }
     },
-
-
 
 
     "/account/investor/login": { ...loginSchema },
@@ -136,6 +138,10 @@ exports.accountPaths = {
                                     "type": "string"
                                 },
                                 "gender": {
+                                    "type": "string"
+                                },
+
+                                "profile_picture": {
                                     "type": "string"
                                 },
                                 "password": {
@@ -186,6 +192,9 @@ exports.accountPaths = {
                                     "type": "string"
                                 },
                                 "gender": {
+                                    "type": "string"
+                                },
+                                "profile_picture": {
                                     "type": "string"
                                 },
                                 "password": {

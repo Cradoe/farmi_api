@@ -36,6 +36,9 @@ exports.farmPaths = {
                                 },
                                 "land_size": {
                                     "type": "string"
+                                },
+                                "logo": {
+                                    "type": "string"
                                 }
                             }
                         }

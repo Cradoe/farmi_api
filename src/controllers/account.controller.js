@@ -2,7 +2,7 @@ const HttpException = require( '../utils/HttpException.utils.js' );
 const bcrypt = require( "bcrypt" );
 const responseCode = require( '../utils/responseCode.utils.js' );
 const sendEmail = require( '../services/sendEmail.service.js' );
-const { generateRandomCode } = require( '../utils/common.utils.js' );
+const { generateRandomCode, formatStaticFilePath } = require( '../utils/common.utils.js' );
 const { generateToken, checkValidation } = require( '../utils/auth.utils.js' );
 
 const { Users: UserModel, Farmers: FarmerModel, Farmers: InvestorModel, Farms: FarmModel, FarmModerators: FarmModeratorModel, BankAccounts: BankAccountModel } = require( '../models/index.js' );
@@ -11,7 +11,6 @@ const { Users: UserModel, Farmers: FarmerModel, Farmers: InvestorModel, Farms: F
 class AccountController {
 
     createUserAccount = async ( req, res ) => {
-
         await this.hashPassword( req );
         const user = await UserModel.findOne( { where: { email: req.body.email } } );
         if ( user ) {
@@ -19,8 +18,7 @@ class AccountController {
             return;
         }
         req.body.activation_code = generateRandomCode();
-
-        const newUser = await UserModel.create( req.body );
+        const newUser = await UserModel.create( { ...req.body, profile_picture: formatStaticFilePath( req, req.file ? req.file.filename : 'default-image.jpg' ) } );
         if ( !newUser ) {
             new HttpException( res, responseCode.internalServerError, 'Something went wrong' );
             return;
@@ -32,6 +30,7 @@ class AccountController {
     };
 
     createFarmerAccount = async ( req, res, next ) => {
+
         const isValid = await checkValidation( req, res );
         if ( !isValid ) return;
 

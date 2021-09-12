@@ -11,3 +11,7 @@ exports.generateRandomCode = () => {
 
 
 
+exports.formatStaticFilePath = ( req, file ) => {
+    var fullUrl = `${req.protocol}://${req.get( 'host' )}/files/${file}`;
+    return fullUrl;
+}

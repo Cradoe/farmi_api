@@ -42,7 +42,8 @@ const createAccountSchema = [
         .notEmpty()
         .withMessage( 'Must be a gender character' )
         .isLength( { max: 1 } )
-        .withMessage( 'Must be at most 1 char long' ),
+        .withMessage( 'Must be at most 1 char long' )
+
 ];
 
 
