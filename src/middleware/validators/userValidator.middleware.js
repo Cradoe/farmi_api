@@ -35,14 +35,7 @@ const createAccountSchema = [
     body( 'confirm_password' )
         .exists()
         .custom( ( value, { req } ) => value === req.body.password )
-        .withMessage( 'Confirm password field must have the same value as the password field' ),
-    body( 'gender' )
-        .exists()
-        .withMessage( 'Your Gender is required' )
-        .notEmpty()
-        .withMessage( 'Must be a gender character' )
-        .isLength( { max: 1 } )
-        .withMessage( 'Must be at most 1 char long' )
+        .withMessage( 'Confirm password field must have the same value as the password field' )
 
 ];
 

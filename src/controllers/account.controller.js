@@ -17,7 +17,7 @@ class AccountController {
             return;
         }
         req.body.activation_code = generateRandomCode();
-        const newUser = await UserModel.create( { ...req.body, profile_picture: formatStaticFilePath( req, req.file ? req.file.filename : 'default-image.jpg' ) } );
+        const newUser = await UserModel.create( { ...req.body, gender: req.body.gender ? req.body.gender : '', profile_picture: formatStaticFilePath( req, req.file ? req.file.filename : 'default-image.jpg' ) } );
         if ( !newUser ) {
             new HttpException( res, responseCode.internalServerError, 'Something went wrong' );
             return;
