@@ -168,8 +168,6 @@ class AccountController {
 
         } )
     };
-
-
     createInvestorAccount = async ( req, res, next ) => {
         const isValid = await checkValidation( req, res );
         if ( !isValid ) return;
