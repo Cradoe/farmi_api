@@ -5,24 +5,24 @@ const createAccountSchema = [
         .exists()
         .withMessage( 'Your first name is required' )
         .isLength( { min: 3 } )
-        .withMessage( 'Must be at least 3 chars long' ),
+        .withMessage( 'First name must be at least 3 chars long' ),
     body( 'lastname' )
         .exists()
         .withMessage( 'Your last name is required' )
         .isLength( { min: 3 } )
-        .withMessage( 'Must be at least 3 chars long' ),
+        .withMessage( 'Last name must be at least 3 chars long' ),
     body( 'phone' )
         .exists()
         .withMessage( 'Your phone number is required' )
         .notEmpty()
-        .withMessage( 'Must be phone number' )
+        .withMessage( 'Invalid phone number' )
         .isLength( { min: 11 } )
-        .withMessage( 'Must be at least 11 chars long' ),
+        .withMessage( 'Phone number must be at least 11 chars long' ),
     body( 'email' )
         .exists()
         .withMessage( 'Email is required' )
         .isEmail()
-        .withMessage( 'Must be a valid email' )
+        .withMessage( 'Email address must be a valid email' )
         .normalizeEmail(),
     body( 'password' )
         .exists()

@@ -8,7 +8,7 @@ exports.applyForCrowdFundSchema = [
         .exists()
         .withMessage( 'You need to specify the amount needed.' )
         .isLength( { min: 2 } )
-        .withMessage( 'Must be at least 2 chars long' ),
+        .withMessage( 'Amount needed must be at least 2 chars long' ),
     body( 'investment_deadline' )
         .exists()
         .withMessage( 'Investment deadline is required' )
@@ -37,7 +37,7 @@ exports.investInCrowdFundSchema = [
         .exists()
         .withMessage( 'You need to specify the amount to invest.' )
         .isLength( { min: 2 } )
-        .withMessage( 'Must be at least 2 chars long' ),
+        .withMessage( 'Amount must be at least 2 chars long' ),
     body( 'txref' )
         .exists()
         .withMessage( 'Transaction reference is required' )
@@ -60,7 +60,7 @@ exports.crowdFundRemitanceSchema = [
         .exists()
         .withMessage( 'You need to specify the amount to pay.' )
         .isLength( { min: 2 } )
-        .withMessage( 'Must be at least 2 chars long' ),
+        .withMessage( 'Amount must be at least 2 chars long' ),
     body( 'txref' )
         .exists()
         .withMessage( 'Transaction reference is required' )

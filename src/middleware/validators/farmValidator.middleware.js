@@ -8,17 +8,17 @@ exports.createFarmSchema = [
         .exists()
         .withMessage( 'Farm name is required.' )
         .isLength( { min: 3 } )
-        .withMessage( 'Must be at least 3 chars long' ),
+        .withMessage( 'Farm name must be at least 3 chars long' ),
     body( 'latitude' )
         .exists()
         .withMessage( 'Latitude is required' )
         .isNumeric()
-        .withMessage( 'Must be only numberic chars' ),
+        .withMessage( 'Latitude must be only numberic chars' ),
     body( 'longitude' )
         .exists()
         .withMessage( 'Longitude is required' )
         .isNumeric()
-        .withMessage( 'Must be only numberic chars' ),
+        .withMessage( 'Longitude must be only numberic chars' ),
     body( 'description' )
         .exists()
         .withMessage( 'Farm description is required.' )
@@ -40,17 +40,17 @@ exports.updateFarmSchema = [
         .exists()
         .withMessage( 'Farm name is required.' )
         .isLength( { min: 3 } )
-        .withMessage( 'Must be at least 3 chars long' ),
+        .withMessage( 'Farm name must be at least 3 chars long' ),
     body( 'latitude' )
         .exists()
         .withMessage( 'Latitude is required' )
         .isNumeric()
-        .withMessage( 'Must be only numberic chars' ),
+        .withMessage( 'Latitude must be only numberic chars' ),
     body( 'longitude' )
         .exists()
         .withMessage( 'Longitude is required' )
         .isNumeric()
-        .withMessage( 'Must be only numberic chars' ),
+        .withMessage( 'Longitude must be only numberic chars' ),
     body( 'description' )
         .exists()
         .withMessage( 'Farm description is required.' )
