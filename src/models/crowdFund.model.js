@@ -19,6 +19,10 @@ module.exports = ( sequelize, DataTypes ) => {
         }
     };
     CrowdFundModel.init( {
+        title: {
+            type: DataTypes.STRING( 100 ),
+            allowNull: false
+        },
         amount_needed: {
             type: DataTypes.FLOAT,
             allowNull: false

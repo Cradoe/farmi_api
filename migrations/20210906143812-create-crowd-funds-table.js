@@ -19,6 +19,10 @@ module.exports = {
         },
         allowNull: false
       },
+      title: {
+        type: Sequelize.STRING( 100 ),
+        allowNull: false
+      },
       amount_needed: {
         type: Sequelize.FLOAT,
         allowNull: false

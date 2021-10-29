@@ -17,6 +17,11 @@ exports.applyForCrowdFundSchema = [
     body( 'roi' )
         .exists()
         .withMessage( 'Percentage of ROI is required' ),
+    body( 'title' )
+        .exists()
+        .withMessage( 'Crowd fund title is required.' )
+        .isLength( { min: 50 } )
+        .withMessage( 'Crowd fund title  must be at least 50 chars long' ),
     body( 'description' )
         .exists()
         .withMessage( 'Crowd fund description is required.' )

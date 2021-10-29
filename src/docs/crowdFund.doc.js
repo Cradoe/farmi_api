@@ -19,6 +19,9 @@ exports.crowdFundPaths = {
                                 "farm_id": {
                                     "type": "string"
                                 },
+                                "title": {
+                                    "type": "string",
+                                },
                                 "amount_needed": {
                                     "type": "string",
                                 },
