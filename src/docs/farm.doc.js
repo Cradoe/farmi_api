@@ -59,6 +59,29 @@ exports.farmPaths = {
         }
 
     },
+    "/farm/{id}": {
+        "get": {
+            "tags": [ "Farms" ],
+            "summary": "Single farm details",
+            "description": "Returns data object of farm",
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of farm to view",
+                    "required": true
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "oK"
+                },
+                "404": {
+                    "description": "No record found."
+                }
+            }
+        }
+    },
     "/farm/edit/{id}": {
         "patch": {
             "tags": [ "Farms" ],

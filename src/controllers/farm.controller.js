@@ -61,6 +61,23 @@ class FarmController {
 
     };
 
+
+    singleFarm = async ( req, res, next ) => {
+        const farm = await FarmModel.findOne( { where: { id: req.params.id } } );
+        if ( !farm ) {
+            new HttpException( res, responseCode.notFound, 'No result found.' );
+            return;
+        }
+
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Farm details fetched successfully.',
+            data: farm.dataValues
+        } );
+
+    };
+
     deleteFarm = async ( req, res, next ) => {
 
         const farm = await FarmModel.findOne( { where: { id: req.params.id } } );
