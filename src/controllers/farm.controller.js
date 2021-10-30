@@ -61,7 +61,6 @@ class FarmController {
 
     };
 
-
     singleFarm = async ( req, res, next ) => {
         const farm = await FarmModel.findOne( { where: { id: req.params.id } } );
         if ( !farm ) {

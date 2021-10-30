@@ -58,8 +58,8 @@ class CrowdFundController {
             return;
         }
 
-        res.status( responseCode.created ).json( {
-            status: responseCode.created,
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
             message: 'List of crowdfunds fetched successfully.',
             data: farmCrowdFunds
         } );
@@ -90,8 +90,8 @@ class CrowdFundController {
             return;
         }
 
-        res.status( responseCode.created ).json( {
-            status: responseCode.created,
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
             message: 'List of crowdfunds fetched successfully.',
             data: farmCrowdFunds.dataValues
         } );
