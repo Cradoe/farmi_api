@@ -10,7 +10,7 @@ const router = express.Router();
 
 
 router.post( '/create', auth(), uploadFile.single( "logo" ), createFarmSchema, awaitHandlerFactory( farmController.createFarm ) );
-router.get( '/:farm_id', auth(), awaitHandlerFactory( farmController.singleFarm ) );
+router.get( '/details/:id', auth(), awaitHandlerFactory( farmController.singleFarm ) );
 router.patch( '/edit/:id', auth(), updateFarmSchema, awaitHandlerFactory( farmController.editFarm ) );
 router.delete( '/delete/:id', auth(), awaitHandlerFactory( farmController.deleteFarm ) );
 

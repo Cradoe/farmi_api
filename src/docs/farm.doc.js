@@ -59,7 +59,7 @@ exports.farmPaths = {
         }
 
     },
-    "/farm/{id}": {
+    "/farm/details/{id}": {
         "get": {
             "tags": [ "Farms" ],
             "summary": "Single farm details",
