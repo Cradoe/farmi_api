@@ -106,7 +106,7 @@ class CrowdFundController {
 
 
 
-        const amountRemaining = Number( crowdFund.amount_needed ) - Number( amountAvailable );
+        const amountRemaining = Number( farmCrowdFunds.amount_needed ) - Number( amountAvailable );
 
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
