@@ -92,7 +92,7 @@ class CrowdFundController {
 
 
         const investments = await InvestmentModel.findAll( {
-            where: { crowd_fund_id: farmCrowdFunds.id }
+            where: { crowd_fund_id: farmCrowdFunds.dataValues.id }
         } );
 
 
@@ -105,8 +105,15 @@ class CrowdFundController {
         }
 
 
+        if ( amountAvailable >= farmCrowdFunds.dataValues.amount_needed ) {
+            await this._updateCrowdFundStatus( farmCrowdFunds.dataValues.id );
+            farmCrowdFunds.dataValues.status = "running";
+        }
+        const amountRemaining = Number( farmCrowdFunds.dataValues.amount_needed ) - Number( amountAvailable );
 
-        const amountRemaining = Number( farmCrowdFunds.amount_needed ) - Number( amountAvailable );
+        let withdrawal = await CrowdFundWithdrawalModel.findOne( { where: { crowd_fund_id: farmCrowdFunds.dataValues.id } } );
+        farmCrowdFunds.dataValues.withdrawal = withdrawal;
+
 
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
