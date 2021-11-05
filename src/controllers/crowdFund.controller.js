@@ -90,10 +90,28 @@ class CrowdFundController {
             return;
         }
 
+
+        const investments = await InvestmentModel.findAll( {
+            where: { crowd_fund_id: farmCrowdFunds.id }
+        } );
+
+
+        let amountAvailable = 0;
+
+        if ( investments && investments.length !== 0 ) {
+            investments.forEach( investment => {
+                amountAvailable += Number( investment.amount );
+            } );
+        }
+
+
+
+        const amountRemaining = Number( crowdFund.amount_needed ) - Number( amountAvailable );
+
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
             message: 'List of crowdfunds fetched successfully.',
-            data: farmCrowdFunds.dataValues
+            data: { ...farmCrowdFunds.dataValues, amountRemaining, amountAvailable }
         } );
 
     };
