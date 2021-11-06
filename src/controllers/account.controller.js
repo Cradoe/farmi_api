@@ -380,7 +380,7 @@ class AccountController {
 
     getUserBankAccounts = async ( req, res, next ) => {
 
-        let bankAccounts = await BankAccountModel.findAll( { where: { user_id: req.currentUser.id, status: 'active' } } );
+        let bankAccounts = await BankAccountModel.findOne( { where: { user_id: req.currentUser.id, status: 'active' } } );
 
         if ( !bankAccounts || bankAccounts.length === 0 ) {
             new HttpException( res, responseCode.notFound, 'You have not added any bank account.' );
@@ -390,7 +390,7 @@ class AccountController {
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
             message: 'Bank fetched succesfully.',
-            data: bankAccounts
+            data: bankAccounts.dataValues
         } );
 
     };
