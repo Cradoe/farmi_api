@@ -1,10 +1,11 @@
 
 const HttpException = require( '../utils/HttpException.utils.js' );
 const responseCode = require( '../utils/responseCode.utils.js' );
+const axios = require( 'axios' );
 const { checkValidation } = require( '../utils/auth.utils.js' );
 const { Op } = require( "sequelize" );
 
-const { Farms: FarmModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel, CrowdFundWithdrawals: CrowdFundWithdrawalModel, CrowdFundPaybackRemitance: CrowdFundPaybackRemitanceModel, SystemPolicies: SystemPolicyModel, CompanyProfit: CompanyProfitModel } = require( '../models/index.js' );
+const { Farms: FarmModel, BankAccounts: BankAccountModel, CrowdFunds: CrowdFundModel, Investments: InvestmentModel, Users: UserModel, CrowdFundWithdrawals: CrowdFundWithdrawalModel, CrowdFundPaybackRemitance: CrowdFundPaybackRemitanceModel, SystemPolicies: SystemPolicyModel, CompanyProfit: CompanyProfitModel } = require( '../models/index.js' );
 const { generateRandomCode } = require( '../utils/common.utils.js' );
 const scheduleJob = require( '../services/scheduleJob.service.js' );
 
@@ -238,8 +239,13 @@ class CrowdFundController {
     }
 
     initiateCrowdFundWithdrawal = async ( req, res, next ) => {
+
+
+
         const isValid = await checkValidation( req, res );
         if ( !isValid ) return;
+        let withdrawalDetails = '';
+
 
         const crowdFund = await CrowdFundModel.findByPk( req.body.crowd_fund_id );
         if ( !crowdFund ) {
@@ -300,9 +306,15 @@ class CrowdFundController {
                 user_id: req.currentUser.id,
                 txref: generateRandomCode() + ( req.currentUser.id ).toString(),
                 bank_account_id: req.body.bank_account_id,
-                amount: amountToBePaid
+                amount: amountToBePaid,
+                status: 'success'
             }
             withdrawal = await CrowdFundWithdrawalModel.create( data );
+
+            withdrawalDetails = await CrowdFundWithdrawalModel.findOne( {
+                where: { id: withdrawal.dataValues.id },
+                include: [ { model: BankAccountModel, as: 'bank', where: { id: withdrawal.dataValues.bank_account_id } } ]
+            } );
         }
 
         if ( !withdrawal ) {
@@ -311,10 +323,10 @@ class CrowdFundController {
         }
 
 
-        res.status( responseCode.created ).json( {
-            status: responseCode.created,
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
             message: 'Your withdrawal request is ready.',
-            data: withdrawal.dataValues
+            data: withdrawalDetails.dataValues
         } );
 
     }
@@ -342,6 +354,24 @@ class CrowdFundController {
         const crowdFunds = await CrowdFundWithdrawalModel.findAll( {
             where: { status: 'success' },
             include: [ { model: CrowdFundModel, as: 'crowdFund', where: { farm_id: req.params.farm_id } } ]
+        } );
+
+        if ( !crowdFunds ) {
+            new HttpException( res, responseCode.notFound, 'No crowdfund withdrawal yet.' );
+            return;
+        }
+
+        res.status( responseCode.oK ).json( {
+            status: responseCode.oK,
+            message: 'Withdrawals retrieved successfully.',
+            data: crowdFunds
+        } );
+    }
+
+    getFarmCrowdFundWithDrawalDetails = async ( req, res, next ) => {
+        const crowdFunds = await CrowdFundWithdrawalModel.findOne( {
+            where: { id: req.params.id },
+            include: [ { model: CrowdFundModel, as: 'crowdFund' }, { model: BankAccountModel, as: 'bank' } ]
         } );
 
         if ( !crowdFunds ) {
@@ -440,6 +470,41 @@ class CrowdFundController {
 
         return amountAvailable;
     }
+
+    _withdrawFromFlutterwave = () => {
+
+        try {
+            const response = axios.post( 'https://api.flutterwave.com/v3/transfers', {
+                "account_bank": "044",
+                "account_number": "0690000040",
+                "amount": 5500,
+                "narration": "Akhlm Pstmn Trnsfr xx007",
+                "currency": "NGN",
+                "reference": "akhlm-pstmnpyt-rfxx007_PMCKDU_1",
+                "callback_url": "https://webhook.site/b3e505b0-fe02-430e-a538-22bbbce8ce0d",
+                "debit_currency": "NGN"
+            }, {
+                headers: { Authorization: 'Bearer FLWSECK_TEST-158941a951db2840b1e782661de42007-X' }
+            } );
+            // const { status, data } = response.data;
+            console.log( "data", response.data );
+            // if ( status === 200 ) {
+            //     return callback.success( data )
+            // }
+        } catch ( error ) {
+            console.log( "error", error );
+        }
+
+    }
+    _convertObjToFormData = ( object ) => {
+        const formData = new FormData();
+        for ( const key in object ) {
+            if ( Object.hasOwnProperty.call( object, key ) ) {
+                formData.append( key, object[ key ] );
+            }
+        }
+        return formData;
+    };
 }
 
 

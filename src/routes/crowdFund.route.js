@@ -20,7 +20,9 @@ router.get( '/investments/:crowd_fund_id', auth(), awaitHandlerFactory( crowdFun
 router.post( '/withdrawal/request', auth(), withdrawalRequestSchema, awaitHandlerFactory( crowdFundController.initiateCrowdFundWithdrawal ) );
 router.post( '/withdrawal/confirm', auth(), confirmWithdrawalSchema, awaitHandlerFactory( crowdFundController.confirmWithdrawal ) );
 
-router.get( '/withdrawals/:farm_id', auth(), awaitHandlerFactory( crowdFundController.getFarmCrowdFundWithDrawals ) );
 
 router.post( '/withdrawal/refund', auth(), crowdFundRemitanceSchema, awaitHandlerFactory( crowdFundController.payUpCrowdFundWithdrawal ) );
+router.get( '/withdrawal/:id', auth(), awaitHandlerFactory( crowdFundController.getFarmCrowdFundWithDrawalDetails ) );
+router.get( '/withdrawals/:farm_id', auth(), awaitHandlerFactory( crowdFundController.getFarmCrowdFundWithDrawals ) );
+
 module.exports = router;
