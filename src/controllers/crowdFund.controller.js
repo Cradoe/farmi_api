@@ -107,8 +107,10 @@ class CrowdFundController {
 
 
         if ( amountAvailable >= farmCrowdFunds.dataValues.amount_needed ) {
-            await this._updateCrowdFundStatus( farmCrowdFunds.dataValues.id );
-            farmCrowdFunds.dataValues.status = "running";
+            if ( farmCrowdFunds.dataValues.status !== 'matured' ) {
+                await this._updateCrowdFundStatus( farmCrowdFunds.dataValues.id );
+                farmCrowdFunds.dataValues.status = "running";
+            }
         }
         const amountRemaining = Number( farmCrowdFunds.dataValues.amount_needed ) - Number( amountAvailable );
 
@@ -190,7 +192,9 @@ class CrowdFundController {
         }
 
         if ( crowdFund.dataValues.amount_needed <= amountAvailable ) {
-            this._updateCrowdFundStatus( req.body.crowd_fund_id );
+            if ( crowdFund.dataValues.status !== 'matured' ) {
+                this._updateCrowdFundStatus( req.body.crowd_fund_id );
+            }
         }
 
         res.status( responseCode.created ).json( {
@@ -415,12 +419,12 @@ class CrowdFundController {
         companyPercentage = ( Number( systemPolicy.dataValues.crowd_fund_percentage ) / 100 ) * amountWithdrawn;
 
 
-        const amountToBePaid = amountWithdrawn + roi + companyPercentage;
+        // const amountToBePaid = amountWithdrawn + roi + companyPercentage;
 
-        if ( amountToBePaid !== Number( req.body.amount ) ) {
-            new HttpException( res, responseCode.badRequest, 'You are expected to pay up ' + amountToBePaid );
-            return;
-        }
+        // if ( amountToBePaid !== Number( req.body.amount ) ) {
+        //     new HttpException( res, responseCode.badRequest, 'You are expected to pay up ' + amountToBePaid );
+        //     return;
+        // }
 
 
         const remitance = await CrowdFundPaybackRemitanceModel.create( req.body );
@@ -436,13 +440,13 @@ class CrowdFundController {
             crowd_fund_payback_remitance_id: remitance.dataValues.id
         }
 
-        const addCompanyProfit = await CompanyProfitModel.create( companyProfit );
+        // const addCompanyProfit = await CompanyProfitModel.create( companyProfit );
 
         //update crowdfund withdrawal status
-        let update = await CrowdFundWithdrawalModel.update( { status: 'paid' }, { where: { crowd_fund_id: req.body.crowd_fund_id } } );
+        // let update = await CrowdFundWithdrawalModel.update( { status: 'paid' }, { where: { crowd_fund_id: req.body.crowd_fund_id } } );
 
         // update crowd funds status
-        scheduleJob( CrowdFundModel.update( { status: 'matured' }, { where: { id: req.body.crowd_fund_id } } ) );
+        const re = await CrowdFundModel.update( { status: 'matured' }, { where: { id: req.body.crowd_fund_id } } );
 
         res.status( responseCode.oK ).json( {
             status: responseCode.oK,
@@ -450,7 +454,6 @@ class CrowdFundController {
             data: remitance.dataValues
         } );
     }
-
     _updateCrowdFundStatus = async ( crowd_fund_id ) => {
         const update = await CrowdFundModel.update( { status: 'running' }, { where: { id: crowd_fund_id } } );
         return;
