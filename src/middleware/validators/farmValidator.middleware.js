@@ -1,9 +1,6 @@
 const { body } = require( 'express-validator' );
 
 exports.createFarmSchema = [
-    body( 'farm_category_id' )
-        .exists()
-        .withMessage( 'Farm category is required' ),
     body( 'farm_name' )
         .exists()
         .withMessage( 'Farm name is required.' )

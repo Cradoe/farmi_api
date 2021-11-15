@@ -171,7 +171,7 @@ class CrowdFundController {
         }
         req.body.investor_id = req.currentUser.id;
 
-        investment = await InvestmentModel.create( req.body );
+        investment = await InvestmentModel.create( { ...req.body, status: 'active' } );
         if ( !investment ) {
             new HttpException( res, responseCode.internalServerError, "Something went wrong" );
             return;

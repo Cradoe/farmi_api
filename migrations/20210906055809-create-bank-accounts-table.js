@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false
       },
       account_number: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING( 10 ),
         allowNull: false
       },
       bank_code: {

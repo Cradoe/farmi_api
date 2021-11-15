@@ -20,7 +20,7 @@ class FarmController {
             return;
         }
 
-        const newFarm = await FarmModel.create( { ...req.body, logo: formatStaticFilePath( req, req.file ? req.file.filename : 'default-logo.jpg' ) } );
+        const newFarm = await FarmModel.create( { ...req.body, farm_category_id: 1, logo: formatStaticFilePath( req, req.file ? req.file.filename : 'default-logo.jpg' ) } );
         if ( !newFarm ) {
             new HttpException( res, responseCode.internalServerError, 'Something went wrong' );
             return;
